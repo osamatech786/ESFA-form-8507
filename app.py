@@ -307,8 +307,11 @@ if st.session_state.step == 1:
     st.text('Please click Next to begin.')
 
     if st.button("Next"):
-        st.session_state.step = 2
-        st.experimental_rerun()
+        if (st.session_state.selected_option=='    '):
+            st.session_state.step = 2
+            st.experimental_rerun()
+        else:
+            st.warning("Please Choose Valid Support Option.")
 
 elif st.session_state.step == 2:
 
@@ -2250,11 +2253,7 @@ elif st.session_state.step == 11:
         template_file = "ph_esfa_v3.docx"
         modified_file = f"ESFA_Form_Submission_{st.session_state.first_name}_{st.session_state.middle_name}_{st.session_state.family_name}.docx"
 
-        if st.session_state.selected_option == "    ":
-            st.warning("Please first select 'Support Option' which is in the beginning of the form.")
-        elif len(st.session_state.participant_signature.json_data['objects']) == 0:
-                st.warning("Please draw your signature.")
-        else:
+        if len(st.session_state.participant_signature.json_data['objects']) != 0:
             # Convert the drawing to a PIL image and save it
             signature_path = 'signature_image.png'
             signature_image = PILImage.fromarray(
@@ -2294,6 +2293,9 @@ elif st.session_state.step == 11:
             else:
                 st.warning("Please upload at least one file or specify a local file.")
     
+        else:
+            st.warning("Please draw your signature.")
+            
         if st.session_state.submission_done:
             st.session_state.clear()
             st.write("Kindly close the form.")
