@@ -307,7 +307,7 @@ if st.session_state.step == 1:
     st.text('Please click Next to begin.')
 
     if st.button("Next"):
-        if (st.session_state.selected_option=='    '):
+        if (st.session_state.selected_option!='    '):
             st.session_state.step = 2
             st.experimental_rerun()
         else:
