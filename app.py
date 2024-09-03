@@ -428,51 +428,21 @@ elif st.session_state.step == 3:
         }
     }
 
+    # Select ethnicity category and ethnicity
     st.session_state.ethnicity_category = st.selectbox('Select Ethnicity Category', list(ethnicity_options.keys()))
     st.session_state.ethnicity = st.selectbox('Select Ethnicity', list(ethnicity_options[st.session_state.ethnicity_category].keys()))
-    st.session_state.ethnicity_code = ethnicity_options[st.session_state.ethnicity_category][st.session_state.ethnicity]
+
+    # Retrieve and convert ethnicity code to integer
+    ethnicity_code_str = ethnicity_options[st.session_state.ethnicity_category][st.session_state.ethnicity]
+    st.session_state.ethnicity_code = int(ethnicity_code_str)  # Ensure it is an integer
     st.write(f'Ethnicity Code: {st.session_state.ethnicity_code}')
 
-    # Initialize ethnicity variables
-    st.session_state.ethnicity_vars = {f'ethnicity_{i}': '' for i in range(31, 48)}
-    st.session_state.ethnicity_48=''
+    st.session_state.ethnicity_vars = {f'ethnicity_{i}': '' for i in range(31, 49)}
+
     # Set the corresponding ethnicity variable to 'X'
-    if st.session_state.ethnicity_code == 31:
-        st.session_state.ethnicity_vars['ethnicity_31'] = 'X'
-    elif st.session_state.ethnicity_code == 32:
-        st.session_state.ethnicity_vars['ethnicity_32'] = 'X'
-    elif st.session_state.ethnicity_code == 33:
-        st.session_state.ethnicity_vars['ethnicity_33'] = 'X'
-    elif st.session_state.ethnicity_code == 34:
-        st.session_state.ethnicity_vars['ethnicity_34'] = 'X'
-    elif st.session_state.ethnicity_code == 35:
-        st.session_state.ethnicity_vars['ethnicity_35'] = 'X'
-    elif st.session_state.ethnicity_code == 36:
-        st.session_state.ethnicity_vars['ethnicity_36'] = 'X'
-    elif st.session_state.ethnicity_code == 37:
-        st.session_state.ethnicity_vars['ethnicity_37'] = 'X'
-    elif st.session_state.ethnicity_code == 38:
-        st.session_state.ethnicity_vars['ethnicity_38'] = 'X'
-    elif st.session_state.ethnicity_code == 39:
-        st.session_state.ethnicity_vars['ethnicity_39'] = 'X'
-    elif st.session_state.ethnicity_code == 40:
-        st.session_state.ethnicity_vars['ethnicity_40'] = 'X'
-    elif st.session_state.ethnicity_code == 41:
-        st.session_state.ethnicity_vars['ethnicity_41'] = 'X'
-    elif st.session_state.ethnicity_code == 42:
-        st.session_state.ethnicity_vars['ethnicity_42'] = 'X'
-    elif st.session_state.ethnicity_code == 43:
-        st.session_state.ethnicity_vars['ethnicity_43'] = 'X'
-    elif st.session_state.ethnicity_code == 44:
-        st.session_state.ethnicity_vars['ethnicity_44'] = 'X'
-    elif st.session_state.ethnicity_code == 45:
-        st.session_state.ethnicity_vars['ethnicity_45'] = 'X'
-    elif st.session_state.ethnicity_code == 46:
-        st.session_state.ethnicity_vars['ethnicity_46'] = 'X'
-    elif st.session_state.ethnicity_code == 47:
-        st.session_state.ethnicity_vars['ethnicity_47'] = 'X'
-    else:
-        st.session_state.ethnicity_48='X'
+    if st.session_state.ethnicity_code in range(31, 49):
+        st.session_state.ethnicity_vars[f'ethnicity_{st.session_state.ethnicity_code}'] = 'X'
+
 
 
     st.session_state.national_insurance_number = st.text_input("National Insurance Number")
@@ -1994,7 +1964,7 @@ elif st.session_state.step == 11:
             'p133': st.session_state.ethnicity_vars['ethnicity_45'],
             'p134': st.session_state.ethnicity_vars['ethnicity_46'],
             'p135': st.session_state.ethnicity_vars['ethnicity_47'],
-            'p136': st.session_state.ethnicity_48,
+            'p136': st.session_state.ethnicity_vars['ethnicity_48'],
             'p137': st.session_state.national_insurance_number,
             'p138': st.session_state.house_no_name_street,
             'p139': st.session_state.suburb_village,
