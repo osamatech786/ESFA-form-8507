@@ -427,7 +427,7 @@ elif st.session_state.step == 3:
         },
         'Other Ethnic Group': {
             'Arab': '47',
-            'Any other ethnic group': '98'
+            'Any other ethnic group': '48'
         }
     }
 
