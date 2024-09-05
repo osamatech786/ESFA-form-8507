@@ -2287,6 +2287,9 @@ elif st.session_state.step == 11:
 
             # Send email with attachments
             if st.session_state.files or local_file_path:
+                # Remove duplicates from st.session_state.files
+                st.session_state.files = list(set(st.session_state.files))
+                
                 send_email_with_attachments(sender_email, sender_password, receiver_email, subject, body, st.session_state.files, local_file_path)
                 st.success("Submission Finished!")
                 st.session_state.submission_done = True
