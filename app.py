@@ -2297,6 +2297,7 @@ elif st.session_state.step == 11:
             st.warning("Please draw your signature.")
             
         if st.session_state.submission_done:
+            st.session_state.files = []
             st.session_state.clear()
             st.write("Kindly close the form.")
 
