@@ -1924,7 +1924,7 @@ elif st.session_state.step == 11:
 
     # submit_button = st.button('Submit')
     if st.button("Submit"):
-        st.write("Please wait while we process your application!")
+        st.warning("Please wait we are processing your application!", icon="🚨")
     # if submit_button:
         st.session_state.placeholder_values = {
 
