@@ -1952,7 +1952,9 @@ elif st.session_state.step == 11:
 
     # submit_button = st.button('Submit')
     if st.button("Submit"):
-        st.warning("Please wait we are processing your application!", icon="🚨")
+        st.write("Please wait while we process your application!")
+        st.warning("Please wait for SNOWFLAKES!", icon="🚨")
+        time.sleep(1)
     # if submit_button:
         st.session_state.placeholder_values = {
 
@@ -2340,7 +2342,8 @@ elif st.session_state.step == 11:
         if st.session_state.submission_done:
             st.session_state.files = []
             st.session_state.clear()
-            st.write("Kindly close the form.")
+            st.success("Processing Complete! Kindly close the form.")
+            st.snow()
 
             
             # st.experimental_rerun()  # Rerun the app to reflect the reset state
