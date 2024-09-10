@@ -15,7 +15,7 @@ import re
 
 st.set_page_config(
     page_title="Prevista - ESFA Form",
-    page_icon="https://lirp.cdn-website.com/d8120025/dms3rep/multi/opt/social-image-88w.png",  # Path to your logo
+    page_icon="https://lirp.cdn-website.com/d8120025/dms3rep/multi/opt/social-image-88w.png",  # Path to logo
     # page_icon="📝",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -346,7 +346,7 @@ elif st.session_state.step == 2:
 
 
     st.session_state.first_name = st.text_input('First Name')
-    st.session_state.middle_name = st.text_input('Middle Name')
+    st.session_state.middle_name = st.text_input('Middle Name (optional)')
     st.session_state.family_name = st.text_input('Family Name')
     st.session_state.learner_name = f"{st.session_state.first_name} {st.session_state.middle_name} {st.session_state.family_name}".strip()
 
@@ -405,7 +405,7 @@ elif st.session_state.step == 2:
     st.text(st.session_state.current_age_text)
 
     if st.button("Next"):
-        if (st.session_state.first_name):
+        if (st.session_state.first_name and st.session_state.middle_name and st.session_state.family_name):
             st.session_state.step = 3
             st.experimental_rerun()
         else:
@@ -480,8 +480,19 @@ elif st.session_state.step == 3:
     # mandatory_fields.extend([f'p{i}' for i in range(137, 150)])
 
     if st.button("Next"):
-        if (is_valid_email(st.session_state.email)):
-            if (st.session_state.first_name):
+        if (is_valid_email(st.session_state.email_address)):
+            if (st.session_state.national_insurance_number and
+                st.session_state.house_no_name_street and
+                st.session_state.suburb_village and
+                st.session_state.town_city and
+                st.session_state.county and
+                st.session_state.country_of_domicile and
+                st.session_state.current_postcode and
+                st.session_state.postcode_prior_enrollment and
+                st.session_state.primary_telephone_number and
+                st.session_state.secondary_telephone_number and
+                st.session_state.next_of_kin and
+                st.session_state.emergency_contact_phone_number):
                 st.session_state.step = 4
                 st.experimental_rerun()
             else:
@@ -860,7 +871,7 @@ elif st.session_state.step == 6:
     # mandatory_fields.extend(['p304'])
    
     if st.button("Next"):
-        if (st.session_state.first_name):
+        if (st.session_state.specify_refereel):
             st.session_state.step = 7
             st.experimental_rerun()
         else:
@@ -1819,7 +1830,7 @@ elif st.session_state.step == 9:
     # )
 
     if st.button("Next"):
-        if (st.session_state.first_name):
+        if (st.session_state.career_aspirations):
             st.session_state.step = 10
             st.experimental_rerun()
         else:
