@@ -33,7 +33,21 @@ def validate_inputs(inputs, mandatory_fields):
     return missing_fields
 
 
-
+def is_valid_email(email):
+    # Comprehensive regex for email validation
+    pattern = r'''
+        ^                         # Start of string
+        (?!.*[._%+-]{2})          # No consecutive special characters
+        [a-zA-Z0-9._%+-]{1,64}    # Local part: allowed characters and length limit
+        (?<![._%+-])              # No special characters at the end of local part
+        @                         # "@" symbol
+        [a-zA-Z0-9.-]+            # Domain part: allowed characters
+        (?<![.-])                 # No special characters at the end of domain
+        \.[a-zA-Z]{2,}$           # Top-level domain with minimum 2 characters
+    '''
+    
+    # Match the entire email against the pattern
+    return re.match(pattern, email, re.VERBOSE) is not None
 
 def replace_placeholders(template_file, modified_file, placeholder_values, signature_path):
     try:
@@ -466,11 +480,14 @@ elif st.session_state.step == 3:
     # mandatory_fields.extend([f'p{i}' for i in range(137, 150)])
 
     if st.button("Next"):
-        if (st.session_state.first_name):
-            st.session_state.step = 4
-            st.experimental_rerun()
+        if (is_valid_email(st.session_state.email)):
+            if (st.session_state.first_name):
+                st.session_state.step = 4
+                st.experimental_rerun()
+            else:
+                st.warning("Please fill in all fields before proceeding.")
         else:
-            st.warning("Please fill in all fields before proceeding.")
+            st.warning("Please enter valid email address.")
 
 elif st.session_state.step == 4:
     # Household Situation Section
