@@ -12,6 +12,8 @@ import shutil
 import re
 # import os
 # from dotenv import load_dotenv
+import traceback
+import io
 
 st.set_page_config(
     page_title="Prevista - ESFA Form",
@@ -53,6 +55,8 @@ def replace_placeholders(template_file, modified_file, placeholder_values, signa
     try:
         print(f"Copying template file '{template_file}' to '{modified_file}'...")
         shutil.copy(template_file, modified_file)
+
+        time.sleep(1)
 
         print(f"Opening document '{modified_file}'...")
         doc = Document(modified_file)
@@ -2306,7 +2310,32 @@ elif st.session_state.step == 11:
                 st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
             signature_image.save(signature_path)
 
-            replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, signature_path)
+            try:
+                # Call the function to replace placeholders
+                replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, signature_path)
+            except Exception as e:
+                # Capture the full stack trace
+                error_details = traceback.format_exc()
+
+                # Display the error message on the screen
+                st.error(f"An error occurred: {str(e)}")
+                
+                # Optionally write the error details to a file (in-memory)
+                error_file = io.StringIO()
+                error_file.write("Error occurred while replacing placeholders:\n")
+                error_file.write(error_details)
+                error_file.seek(0)  # Move cursor to the start of the file
+
+                # Provide a download button for the error log
+                st.download_button(
+                    label="Download Error Log",
+                    data=error_file,
+                    file_name="error_log.txt",
+                    mime="text/plain"
+                )
+
+                # Rerun the app to refresh the screen
+                st.experimental_rerun()
 
             # Email
 
