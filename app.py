@@ -1441,7 +1441,8 @@ elif st.session_state.step == 7:
     st.session_state.selected_main_option = st.radio("Select an employment status or document:", main_options)
 
     if st.session_state.selected_main_option == main_options[0]:
-        st.session_state.latest_payslip = handle_file_upload('Latest Payslip (maximum 3 months prior to start date)')
+        st.session_state.latest_payslip = 'X'
+        handle_file_upload('Latest Payslip (maximum 3 months prior to start date)')
 
         # Validation for the date of issue
         st.session_state.current_date = date.today()
@@ -1463,11 +1464,14 @@ elif st.session_state.step == 7:
         st.session_state.e04_date_of_issue = st.session_state.e04_date_of_issue.strftime("%d-%m-%Y")
 
     elif st.session_state.selected_main_option == main_options[1]:
-        st.session_state.e04_employment_contract = handle_file_upload('Employment Contract')
+        st.session_state.e04_employment_contract = 'X'
+        handle_file_upload('Employment Contract')
     elif st.session_state.selected_main_option == main_options[2]:
-        st.session_state.confirmation_from_employer = handle_file_upload('Confirmation from the employer')
+        st.session_state.confirmation_from_employer = 'X'
+        handle_file_upload('Confirmation from the employer')
     elif st.session_state.selected_main_option == main_options[3]:
-        st.session_state.redundancy_notice = handle_file_upload('Redundancy consultation or notice')
+        st.session_state.redundancy_notice = 'X'
+        handle_file_upload('Redundancy consultation or notice')
     elif st.session_state.selected_main_option == main_options[4]:
         self_employed_options = [
             "HMRC 'SA302' self-assessment tax declaration, with acknowledgement of receipt (within last 12 months)",
@@ -1477,17 +1481,23 @@ elif st.session_state.step == 7:
         ]
         st.session_state.selected_self_employed_option = st.radio("Select self-employed evidence:", self_employed_options)
         if st.session_state.selected_self_employed_option == self_employed_options[0]:
-            st.session_state.sa302_declaration = handle_file_upload("HMRC 'SA302' self-assessment tax declaration")
+            st.session_state.sa302_declaration = 'X'
+            handle_file_upload("HMRC 'SA302' self-assessment tax declaration")
         elif st.session_state.selected_self_employed_option == self_employed_options[1]:
-            st.session_state.ni_contributions = handle_file_upload('Records of Class 2 National Insurance Contributions')
+            st.session_state.ni_contributions = 'X'
+            handle_file_upload('Records of Class 2 National Insurance Contributions')
         elif st.session_state.selected_self_employed_option == self_employed_options[2]:
-            st.session_state.business_records = handle_file_upload('Business records')
+            st.session_state.business_records = 'X'
+            handle_file_upload('Business records')
         elif st.session_state.selected_self_employed_option == self_employed_options[3]:
-            st.session_state.companies_house_records = handle_file_upload('Companies House records')
+            st.session_state.companies_house_records = 'X'
+            handle_file_upload('Companies House records')
     elif st.session_state.selected_main_option == main_options[5]:
-        st.session_state.other_evidence_employed = handle_file_upload("Other evidence as listed in the 'Start-Eligibility Evidence list'")
+        st.session_state.other_evidence_employed = 'X'
+        handle_file_upload("Other evidence as listed in the 'Start-Eligibility Evidence list'")
     elif st.session_state.selected_main_option == main_options[6]:
-        st.session_state.unemployed = handle_file_upload('Unemployed (complete the Employment section in ILP form)')
+        st.session_state.unemployed = 'X'
+        handle_file_upload('Unemployed (complete the Employment section in ILP form)')
 
     if st.button("Next"):
         if (st.session_state.country_of_issue and st.session_state.id_document_reference_number and st.session_state.e01_additional_notes):
