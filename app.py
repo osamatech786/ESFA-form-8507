@@ -382,11 +382,11 @@ elif st.session_state.step == 2:
     st.session_state.gender = st.radio("Gender", ["M", "F", "Other"])
     # Conditional input for "Other" gender option
     if st.session_state.gender == "M":
-        st.session_state.gender_m = 'X'
+        st.session_state.gender_m = 'M'
     elif st.session_state.gender == "F":
-        st.session_state.gender_f = 'X'
+        st.session_state.gender_f = 'F'
     elif st.session_state.gender == "Other":
-        st.session_state.other_gender =  'X'
+        st.session_state.other_gender =  'Other'
         st.session_state.other_gender_text = st.text_input("If Other, please state")
         # mandatory_fields.extend(['p117'])
     
@@ -601,7 +601,7 @@ elif st.session_state.step == 5:
 
     # Set variables based on user selection
     if st.session_state.disability == 'Y':
-        st.session_state.has_disability, st.session_state.no_disability = 'Y', '-'
+        st.session_state.has_disability, st.session_state.no_disability = 'Y', ''
 
         # LLDD or Health Problem Types
         st.subheader('LLDD or Health Problem Type')
@@ -774,7 +774,7 @@ elif st.session_state.step == 5:
 
 
     else:
-        st.session_state.has_disability, st.session_state.no_disability = '-', 'N'
+        st.session_state.has_disability, st.session_state.no_disability = '', 'N'
 
     
     # Other disadvantaged sections
@@ -1505,14 +1505,14 @@ elif st.session_state.step == 8:
     ['No', 'Yes'])
 
     if st.session_state.qualification_or_training=='Yes':
-        st.session_state.qualification_or_training_y, st.session_state.qualification_or_training_n = 'Y', '-'
+        st.session_state.qualification_or_training_y, st.session_state.qualification_or_training_n = 'Y', ''
 
         st.session_state.course_details = st.text_area('Course Details',
                                       'Enter details of the course')
         st.session_state.funding_details = st.text_area(
             'Funding Details', 'Enter details of how the course is funded')
     else:
-        st.session_state.qualification_or_training_y, st.session_state.qualification_or_training_n = '-', 'N'
+        st.session_state.qualification_or_training_y, st.session_state.qualification_or_training_n = '', 'N'
         st.session_state.course_details, st.session_state.funding_details = '', ''
         st.write(
             'You answered "No" to currently undertaking a qualification or training.'
@@ -1895,9 +1895,9 @@ elif st.session_state.step == 10:
     st.session_state.contact_surveys_val, st.session_state.contact_phone_val, st.session_state.contact_email_val, st.session_state.contact_post_val = '', '', '', ''
     # Update the variables based on user selections
     st.session_state.contact_surveys_val = 'Y' if st.session_state.contact_surveys == "Y" else 'N'
-    st.session_state.contact_phone_val = 'X' if st.session_state.contact_phone == "Y" else 'N'
-    st.session_state.contact_email_val = 'X' if st.session_state.contact_email == "Y" else 'N'
-    st.session_state.contact_post_val = 'X' if st.session_state.contact_post == "Y" else 'N'
+    st.session_state.contact_phone_val = 'Y' if st.session_state.contact_phone == "Y" else 'N'
+    st.session_state.contact_email_val = 'Y' if st.session_state.contact_email == "Y" else 'N'
+    st.session_state.contact_post_val = 'Y' if st.session_state.contact_post == "Y" else 'N'
 
     if st.button("Next"):
         if (st.session_state.first_name):
@@ -2280,7 +2280,7 @@ elif st.session_state.step == 11:
         # else:   
 
         # Define input and output paths
-        template_file = "ph_esfa_v3.docx"
+        template_file = "ph_esfa_v4.docx"
         modified_file = f"ESFA_Form_Submission_{st.session_state.first_name}_{st.session_state.middle_name}_{st.session_state.family_name}.docx"
 
         if len(st.session_state.participant_signature.json_data['objects']) != 0:
