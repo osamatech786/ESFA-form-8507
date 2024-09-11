@@ -2288,14 +2288,17 @@ elif st.session_state.step == 11:
             
         # else:   
 
+        # Remove leading/trailing spaces, then replace internal spaces with underscores, and convert to lowercase
+        safe_first_name = st.session_state.first_name.strip().replace(" ", "_").lower()
+        safe_family_name = st.session_state.family_name.strip().replace(" ", "_").lower()
+
         # Define input and output paths
         template_file = "ph_esfa_v3.docx"
-        modified_file = f"ESFA_Form_Submission_{st.session_state.first_name}_{st.session_state.middle_name}_{st.session_state.family_name}.docx"
+        modified_file = f"ESFA_Form_Submission_{safe_first_name}_{safe_family_name}.docx"
 
         if len(st.session_state.participant_signature.json_data['objects']) != 0:
             
             # Convert the drawing to a PIL image and save it
-            safe_family_name = st.session_state.family_name.replace(" ", "_").lower()
             signature_path = f'signature_{safe_family_name}.png'
             # signature_path = 'signature_image.png'
 
@@ -2321,7 +2324,7 @@ elif st.session_state.step == 11:
             receiver_email = sender_email
             # receiver_email = 'mohamedr@prevista.co.uk'
             
-            subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.middle_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
+            subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
 
             body = "ESFA Form submitted. Please find attached files."
 
