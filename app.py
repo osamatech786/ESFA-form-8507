@@ -405,7 +405,7 @@ elif st.session_state.step == 2:
     st.text(st.session_state.current_age_text)
 
     if st.button("Next"):
-        if (st.session_state.first_name and st.session_state.middle_name and st.session_state.family_name):
+        if (st.session_state.first_name and st.session_state.family_name):
             st.session_state.step = 3
             st.experimental_rerun()
         else:
@@ -1278,31 +1278,31 @@ elif st.session_state.step == 7:
             if uploaded_file_4 is not None:
                 st.session_state.files.append(uploaded_file_4)
 
-        st.session_state.country_of_issue = st.text_input('Country of issue')
-        st.session_state.id_document_reference_number = st.text_input('ID Document Reference Number')
+    st.session_state.country_of_issue = st.text_input('Country of issue')
+    st.session_state.id_document_reference_number = st.text_input('ID Document Reference Number')
 
-        st.session_state.e01_date_of_issue = st.date_input(
-            label="Date of Issue",
-            value=datetime(2000, 1, 1),  # Default date
-            min_value=date(1900, 1, 1),  # Minimum selectable date
-            max_value=date(2025, 12, 31),  # Maximum selectable date
-            help="Choose a date",  # Tooltip text
-            format='DD/MM/YYYY'
-        )
-        st.session_state.e01_date_of_issue = st.session_state.e01_date_of_issue.strftime("%d-%m-%Y")
+    st.session_state.e01_date_of_issue = st.date_input(
+        label="Date of Issue",
+        value=datetime(2000, 1, 1),  # Default date
+        min_value=date(1900, 1, 1),  # Minimum selectable date
+        max_value=date(2025, 12, 31),  # Maximum selectable date
+        help="Choose a date",  # Tooltip text
+        format='DD/MM/YYYY'
+    )
+    st.session_state.e01_date_of_issue = st.session_state.e01_date_of_issue.strftime("%d-%m-%Y")
 
-        st.session_state.e01_date_of_expiry = st.date_input(
-            label="Date of Expiry",
-            value=datetime(2000, 1, 1),  # Default date
-            min_value=date(1900, 1, 1),  # Minimum selectable date
-            max_value=date(2050, 12, 31),  # Maximum selectable date
-            help="Choose a date",  # Tooltip text
-            format='DD/MM/YYYY'
-        )
-        st.session_state.e01_date_of_expiry = st.session_state.e01_date_of_expiry.strftime("%d-%m-%Y")
+    st.session_state.e01_date_of_expiry = st.date_input(
+        label="Date of Expiry",
+        value=datetime(2000, 1, 1),  # Default date
+        min_value=date(1900, 1, 1),  # Minimum selectable date
+        max_value=date(2050, 12, 31),  # Maximum selectable date
+        help="Choose a date",  # Tooltip text
+        format='DD/MM/YYYY'
+    )
+    st.session_state.e01_date_of_expiry = st.session_state.e01_date_of_expiry.strftime("%d-%m-%Y")
 
-        st.session_state.e01_additional_notes = st.text_area('Additional Notes',
-                                            'Use this space for additional notes where relevant (type of Visa, restrictions, expiry etc.)')
+    st.write("Additional Notes")
+    st.session_state.e01_additional_notes = st.text_area('Use this space for additional notes where relevant (type of Visa, restrictions, expiry etc.)')
         
 
 
@@ -1489,11 +1489,11 @@ elif st.session_state.step == 7:
     st.session_state.e04_date_of_issue = st.session_state.e04_date_of_issue.strftime("%d-%m-%Y")
 
     if st.button("Next"):
-        if (st.session_state.first_name):
+        if (st.session_state.country_of_issue and st.session_state.id_document_reference_number and st.session_state.e01_additional_notes):
             st.session_state.step = 8
             st.experimental_rerun()
         else:
-            st.warning("Please fill in all fields before proceeding.")
+            st.warning("Please fill 'Country of issue' and 'ID Document Reference Number' and 'Additional Note'")
 
 elif st.session_state.step == 8:
     st.title("> 7: Details of Qualification or Training")
@@ -2284,8 +2284,12 @@ elif st.session_state.step == 11:
         modified_file = f"ESFA_Form_Submission_{st.session_state.first_name}_{st.session_state.middle_name}_{st.session_state.family_name}.docx"
 
         if len(st.session_state.participant_signature.json_data['objects']) != 0:
+            
             # Convert the drawing to a PIL image and save it
-            signature_path = 'signature_image.png'
+            safe_family_name = st.session_state.family_name.replace(" ", "_").lower()
+            signature_path = f'signature_{safe_family_name}.png'
+            # signature_path = 'signature_image.png'
+
             signature_image = PILImage.fromarray(
                 st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
             signature_image.save(signature_path)
