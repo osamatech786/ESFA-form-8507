@@ -345,6 +345,7 @@ elif st.session_state.step == 2:
         st.session_state.title_ms = 'X'
 
 
+    st.session_state.middle_name=''
     st.session_state.first_name = st.text_input('First Name')
     st.session_state.middle_name = st.text_input('Middle Name (optional)')
     st.session_state.family_name = st.text_input('Family Name')
@@ -464,6 +465,7 @@ elif st.session_state.step == 3:
 
     st.session_state.national_insurance_number = st.text_input("National Insurance Number")
 
+    st.session_state.county, st.session_state.secondary_telephone_number = '', ''
     st.session_state.house_no_name_street = st.text_input("House No./Name & Street")
     st.session_state.suburb_village = st.text_input("Suburb / Village")
     st.session_state.town_city = st.text_input("Town / City")
