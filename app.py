@@ -1442,6 +1442,26 @@ elif st.session_state.step == 7:
 
     if st.session_state.selected_main_option == main_options[0]:
         st.session_state.latest_payslip = handle_file_upload('Latest Payslip (maximum 3 months prior to start date)')
+
+        # Validation for the date of issue
+        st.session_state.current_date = date.today()
+        st.session_state.three_months_ago = st.session_state.current_date - timedelta(days=90)
+
+        st.session_state.e04_date_of_issue = st.date_input(
+            label="Date of Issue of evidence ",
+            value=date.today(),  # Default date
+            min_value=date(1900, 1, 1),  # Minimum selectable date
+            max_value=date(2025, 12, 31),  # Maximum selectable date
+            help="Choose a date",  # Tooltip text
+            format='DD/MM/YYYY'
+        )
+
+        if st.session_state.e04_date_of_issue < st.session_state.three_months_ago:
+            st.warning("The date of issue is not within the last 3 months. Please select a valid date.")
+            st.stop()
+        st.success("The date of issue is within the last 3 months.")
+        st.session_state.e04_date_of_issue = st.session_state.e04_date_of_issue.strftime("%d-%m-%Y")
+
     elif st.session_state.selected_main_option == main_options[1]:
         st.session_state.e04_employment_contract = handle_file_upload('Employment Contract')
     elif st.session_state.selected_main_option == main_options[2]:
@@ -1468,25 +1488,6 @@ elif st.session_state.step == 7:
         st.session_state.other_evidence_employed = handle_file_upload("Other evidence as listed in the 'Start-Eligibility Evidence list'")
     elif st.session_state.selected_main_option == main_options[6]:
         st.session_state.unemployed = handle_file_upload('Unemployed (complete the Employment section in ILP form)')
-
-    # Validation for the date of issue
-    st.session_state.current_date = date.today()
-    st.session_state.three_months_ago = st.session_state.current_date - timedelta(days=90)
-
-    st.session_state.e04_date_of_issue = st.date_input(
-        label="Date of Issue of evidence ",
-        value=date.today(),  # Default date
-        min_value=date(1900, 1, 1),  # Minimum selectable date
-        max_value=date(2025, 12, 31),  # Maximum selectable date
-        help="Choose a date",  # Tooltip text
-        format='DD/MM/YYYY'
-    )
-
-    if st.session_state.e04_date_of_issue < st.session_state.three_months_ago:
-        st.warning("The date of issue is not within the last 3 months. Please select a valid date.")
-        st.stop()
-    st.success("The date of issue is within the last 3 months.")
-    st.session_state.e04_date_of_issue = st.session_state.e04_date_of_issue.strftime("%d-%m-%Y")
 
     if st.button("Next"):
         if (st.session_state.country_of_issue and st.session_state.id_document_reference_number and st.session_state.e01_additional_notes):
