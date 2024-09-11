@@ -2280,7 +2280,7 @@ elif st.session_state.step == 11:
         # else:   
 
         # Define input and output paths
-        template_file = "ph_esfa_v4.docx"
+        template_file = "ph_esfa_v3.docx"
         modified_file = f"ESFA_Form_Submission_{st.session_state.first_name}_{st.session_state.middle_name}_{st.session_state.family_name}.docx"
 
         if len(st.session_state.participant_signature.json_data['objects']) != 0:
