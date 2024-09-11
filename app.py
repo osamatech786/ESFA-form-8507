@@ -465,9 +465,10 @@ elif st.session_state.step == 3:
 
     st.session_state.national_insurance_number = st.text_input("National Insurance Number")
 
-    st.session_state.county, st.session_state.secondary_telephone_number = '', ''
+    st.session_state.county, st.session_state.secondary_telephone_number, st.session_state.suburb_village = '', '', ''
+    st.session_state.next_of_kin, st.session_state.emergency_contact_phone_number = 'N/A', 'N/A'
     st.session_state.house_no_name_street = st.text_input("House No./Name & Street")
-    st.session_state.suburb_village = st.text_input("Suburb / Village")
+    st.session_state.suburb_village = st.text_input("Suburb / Village (Optional)")
     st.session_state.town_city = st.text_input("Town / City")
     st.session_state.county = st.text_input("County (optional)")
     st.session_state.country_of_domicile = st.text_input("Country of Domicile")
@@ -485,14 +486,11 @@ elif st.session_state.step == 3:
         if (is_valid_email(st.session_state.email_address)):
             if (st.session_state.national_insurance_number and
                 st.session_state.house_no_name_street and
-                st.session_state.suburb_village and
                 st.session_state.town_city and
                 st.session_state.country_of_domicile and
                 st.session_state.current_postcode and
                 st.session_state.postcode_prior_enrollment and
-                st.session_state.primary_telephone_number and
-                st.session_state.next_of_kin and
-                st.session_state.emergency_contact_phone_number):
+                st.session_state.primary_telephone_number):
                 st.session_state.step = 4
                 st.experimental_rerun()
             else:
@@ -779,7 +777,7 @@ elif st.session_state.step == 5:
     
     # Other disadvantaged sections
     st.subheader('Other disadvantaged')
-    st.session_state.ex_offender = st.radio('Ex Offender?', ['Y', 'N', 'Choose not to say'])
+    st.session_state.ex_offender = st.radio('Ex Offender?', ['N', 'Y', 'Choose not to say'])
     # Initialize ex_offender variables
     st.session_state.ex_offender_y, st.session_state.ex_offender_n, st.session_state.ex_offender_choose_not_to_say = '', '', ''
     # Conditional input for ex_offender option
@@ -790,7 +788,7 @@ elif st.session_state.step == 5:
     elif st.session_state.ex_offender == "Choose not to say":
         st.session_state.ex_offender_choose_not_to_say = 'Choose not to say'
     
-    st.session_state.homeless = st.radio('Homeless?', ['Y', 'N', 'Choose not to say '])
+    st.session_state.homeless = st.radio('Homeless?', ['N', 'Y', 'Choose not to say '])
     # Initialize homeless variables
     st.session_state.homeless_y, st.session_state.homeless_n, st.session_state.homeless_choose_not_to_say = '', '', ''
     # Conditional input for homeless option
@@ -956,7 +954,7 @@ elif st.session_state.step == 7:
         
 
     # Initialize economically inactive variables
-    st.session_state.inactive_status_val, st.session_state.inactive_evidence_type_val, st.session_state.inactive_evidence_date_val = '-', '-', '-'
+    st.session_state.inactive_status_val, st.session_state.inactive_evidence_type_val, st.session_state.inactive_evidence_date_val = 'N', '-', '-'
     
     # Section B - Economically Inactive details
     if "Economically Inactive" in st.session_state.employment_status:
@@ -969,7 +967,7 @@ elif st.session_state.step == 7:
         )
 
         # Setting 'X' for chosen inactive status
-        st.session_state.inactive_status_val = 'Yes' if st.session_state.inactive_status == "Y" else 'No'
+        st.session_state.inactive_status_val = 'Y' if st.session_state.inactive_status == "Y" else 'N'
 
         st.session_state.inactive_evidence_type_val = st.text_input("Type of evidence for Economically Inactive Status including self-declaration statement.")
         st.session_state.inactive_evidence_date_val = st.date_input("Date of issue of evidence", format='DD/MM/YYYY')
