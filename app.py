@@ -51,7 +51,7 @@ def is_valid_email(email):
     # Match the entire email against the pattern
     return re.match(pattern, email, re.VERBOSE) is not None
 
-def replace_placeholders(template_file, modified_file, placeholder_values, signature_path):
+def replace_placeholders(template_file, modified_file, placeholder_values, resized_image_path):
     try:
         print(f"Copying template file '{template_file}' to '{modified_file}'...")
         shutil.copy(template_file, modified_file)
@@ -112,17 +112,8 @@ def replace_placeholders(template_file, modified_file, placeholder_values, signa
                 print(f"Found 'p230' in paragraph: '{para_text}'")
                 para_text = para_text.replace('p230', '').strip()  # Remove 'p230' and any leading/trailing spaces
                 para.text = para_text
-                resized_image_path = 'resized_signature_image.png'
                 
                 try:
-                    # Open and resize the image
-                    print(f"Opening image file: {signature_path}")
-                    resized_image = PILImage.open(signature_path)
-                    print(f"Original image size: {resized_image.size}")
-                    resized_image = resize_image_to_fit_cell(resized_image, 200, 50)
-                    resized_image.save(resized_image_path)  # Save resized image to a file
-                    print(f"Resized image saved to: {resized_image_path}")
-                    
                     # Add picture to the paragraph
                     print(f"Adding picture to paragraph from path: {resized_image_path}")
                     para.add_run().add_picture(resized_image_path, width=Inches(2))
@@ -143,17 +134,8 @@ def replace_placeholders(template_file, modified_file, placeholder_values, signa
                                 print(f"Found 'p230' in table cell paragraph: '{para_text}'")
                                 para_text = para_text.replace('p230', '').strip()
                                 para.text = para_text
-                                resized_image_path = 'resized_signature_image.png'
                                 
                                 try:
-                                    # Open and resize the image
-                                    print(f"Opening image file: {signature_path}")
-                                    resized_image = PILImage.open(signature_path)
-                                    print(f"Original image size: {resized_image.size}")
-                                    resized_image = resize_image_to_fit_cell(resized_image, 200, 50)
-                                    resized_image.save(resized_image_path)  # Save resized image to a file
-                                    print(f"Resized image saved to: {resized_image_path}")
-                                    
                                     # Add picture to the table cell
                                     print(f"Adding picture to table cell from path: {resized_image_path}")
                                     para.add_run().add_picture(resized_image_path, width=Inches(2))
@@ -173,15 +155,15 @@ def replace_placeholders(template_file, modified_file, placeholder_values, signa
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    # file download button
-    with open(modified_file, 'rb') as f:
-        file_contents = f.read()
-        st.download_button(
-            label="Download Your Response",
-            data=file_contents,
-            file_name=modified_file,
-            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        )
+    # # file download button
+    # with open(modified_file, 'rb') as f:
+    #     file_contents = f.read()
+    #     st.download_button(
+    #         label="Download Your Response",
+    #         data=file_contents,
+    #         file_name=modified_file,
+    #         mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    #     )
 
 
 def resize_image_to_fit_cell(image, max_width, max_height):
@@ -1965,8 +1947,7 @@ elif st.session_state.step == 11:
 
     # submit_button = st.button('Submit')
     if st.button("Submit"):
-        st.write("Please wait while we process your application!")
-        st.warning("Please wait for SNOWFLAKES!", icon="🚨")
+        st.warning('Please wait! We are currently processing. . . .', icon="🚨")
         time.sleep(1)
     # if submit_button:
         st.session_state.placeholder_values = {
@@ -2303,16 +2284,27 @@ elif st.session_state.step == 11:
         if len(st.session_state.participant_signature.json_data['objects']) != 0:
             
             # Convert the drawing to a PIL image and save it
-            signature_path = f'signature_{safe_family_name}.png'
+            signature_path = f'signature_{safe_first_name}_{safe_family_name}.png'            
             # signature_path = 'signature_image.png'
+            resized_image_path = f'resized_signature_image_{safe_first_name}_{safe_family_name}.png'
+
 
             signature_image = PILImage.fromarray(
                 st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
             signature_image.save(signature_path)
 
+            # Open and resize the image
+            print(f"Opening image file: {signature_path}")
+            resized_image = PILImage.open(signature_path)
+            print(f"Original image size: {resized_image.size}")
+            resized_image = resize_image_to_fit_cell(resized_image, 200, 50)
+            resized_image.save(resized_image_path)  # Save resized image to a file
+            print(f"Resized image saved to: {resized_image_path}")
+
+
             try:
                 # Call the function to replace placeholders
-                replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, signature_path)
+                replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, resized_image_path)
             except Exception as e:
                 # Capture the full stack trace
                 error_details = traceback.format_exc()
@@ -2344,14 +2336,12 @@ elif st.session_state.step == 11:
             # Credentials: Streamlit host st.secrets
             sender_email = st.secrets["sender_email"]
             sender_password = st.secrets["sender_password"]
-
+            receiver_email = sender_email
+            
             # Credentials: Local env
             # load_dotenv()                                     # uncomment import of this library!
             # sender_email = os.getenv('EMAIL')
             # sender_password = os.getenv('PASSWORD')
-
-            receiver_email = sender_email
-            # receiver_email = 'mohamedr@prevista.co.uk'
             
             subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
 
@@ -2382,13 +2372,36 @@ elif st.session_state.step == 11:
                 st.warning("Please upload at least one file or specify a local file.")
     
         else:
-            st.warning("Please draw your signature.")
+            st.warning("SIGNATURE is missing! Please draw the signature.")
             
         if st.session_state.submission_done:
-            st.session_state.files = []
-            st.session_state.clear()
-            st.success("Processing Complete! Kindly close the form.")
-            st.snow()
+            try:
+                # file download button
+                with open(modified_file, 'rb') as f:
+                    file_contents = f.read()
+                    st.download_button(
+                        label="Download Your Response",
+                        data=file_contents,
+                        file_name=modified_file,
+                        mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    )
+
+                # clear session state
+                st.session_state.files = []
+                st.session_state.clear()
+                st.write("Please close the form.")
+                st.snow()
+
+            except Exception as e:
+                st.write("Unable to download the file. Please whatsapp learner name to +447405327072 for verificatino of submission.")
+                st.error('Please wait, form will reprocess and will give you the option again to submit in 5 SECONDS')
+                time.sleep(7)
+
+                st.session_state.submission_done = False
+                st.session_state.step = 11
+                st.experimental_rerun()
+
+
 
             
             # st.experimental_rerun()  # Rerun the app to reflect the reset state
