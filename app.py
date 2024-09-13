@@ -460,7 +460,7 @@ elif st.session_state.step == 3:
     st.session_state.country_of_domicile = st.text_input("Country of Domicile")
     st.session_state.current_postcode = st.text_input("Current Postcode")
     st.session_state.postcode_prior_enrollment = st.text_input("Postcode Prior to Enrolment")
-    st.session_state.email_address = st.text_input("Email Address")
+    st.session_state.email_address.strip().replace(" ", "_").lower() = st.text_input("Email Address")
     st.session_state.primary_telephone_number = st.text_input("Primary Telephone Number")
     st.session_state.secondary_telephone_number = st.text_input("Secondary Telephone Number (optional)")
     st.session_state.next_of_kin = st.text_input("Next of kin/Emergency contact")
