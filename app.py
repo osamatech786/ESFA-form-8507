@@ -29,11 +29,18 @@ st.set_page_config(
 
 # add render support along with st.secret
 def get_secret(key):
-    # Check if running in a Streamlit environment
-    if hasattr(st, 'secrets'):
-        return st.secrets.get(key)
-    # Otherwise, check environment variables for render
-    return os.environ.get(key)
+    try:
+        # Attempt to get the secret from environment variables
+        secret = os.environ.get(key)
+        if secret is None:
+            raise ValueError("Secret not found in environment variables")
+        return secret
+    except (ValueError, TypeError) as e:
+        # If an error occurs, fall back to Streamlit secrets
+        if hasattr(st, 'secrets'):
+            return st.secrets.get(key)
+        # If still not found, return None or handle as needed
+        return None
 
 
 def validate_inputs(inputs, mandatory_fields):
