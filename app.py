@@ -10,7 +10,7 @@ import smtplib
 from email.message import EmailMessage
 import shutil
 import re
-# import os
+import os
 # from dotenv import load_dotenv
 import traceback
 import io
@@ -26,6 +26,16 @@ st.set_page_config(
 # =========================================================================
 # All Functions
 # =========================================================================
+
+# add render support along with st.secret
+def get_secret(key):
+    # Check if running in a Streamlit environment
+    if hasattr(st, 'secrets'):
+        return st.secrets.get(key)
+    # Otherwise, check environment variables for render
+    return os.environ.get(key)
+
+
 def validate_inputs(inputs, mandatory_fields):
     """Check if all mandatory input fields are filled and return the list of missing fields."""
     missing_fields = []
@@ -2334,8 +2344,11 @@ elif st.session_state.step == 11:
             # Sender email credentials
 
             # Credentials: Streamlit host st.secrets
-            sender_email = st.secrets["sender_email"]
-            sender_password = st.secrets["sender_password"]
+            # sender_email = st.secrets["sender_email"]
+            # sender_password = st.secrets["sender_password"]
+            sender_email = get_secret("sender_email")
+            sender_password = get_secret("sender_password")
+
             receiver_email = sender_email
             
             # Credentials: Local env
