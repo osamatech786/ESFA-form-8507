@@ -13,7 +13,7 @@ import re
 import os
 # from dotenv import load_dotenv
 import traceback
-import io
+# import io
 import requests
 
 st.set_page_config(
@@ -2316,9 +2316,6 @@ elif st.session_state.step == 11:
                 # Call the function to replace placeholders
                 replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, resized_image_path)
             except Exception as e:
-                # Capture the full stack trace
-                error_details = traceback.format_exc()
-
                 # Display the error message on the screen
                 st.error('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS automatically')
                 st.error(f"Please take screenshot of the following error and share with Developer: \n{str(e)}")
