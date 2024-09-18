@@ -42,6 +42,9 @@ def get_secret(key):
         # If still not found, return None or handle as needed
         return None
 
+# Sanitize the file name to avoid invalid characters
+def sanitize_filename(filename):
+    return re.sub(r'[<>:"/\\|?*]', '', filename)
 
 def validate_inputs(inputs, mandatory_fields):
     """Check if all mandatory input fields are filled and return the list of missing fields."""
@@ -2296,30 +2299,28 @@ elif st.session_state.step == 11:
 
         # Define input and output paths
         template_file = "ph_esfa_v3.docx"
-        modified_file = f"ESFA_Form_Submission_{safe_first_name}_{safe_family_name}.docx"
+        modified_file = f"ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
 
         if len(st.session_state.participant_signature.json_data['objects']) != 0:
             
             # Convert the drawing to a PIL image and save it
-            signature_path = f'signature_{safe_first_name}_{safe_family_name}.png'            
+            signature_path = f'signature_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'            
             # signature_path = 'signature_image.png'
-            resized_image_path = f'resized_signature_image_{safe_first_name}_{safe_family_name}.png'
-
-
-            signature_image = PILImage.fromarray(
-                st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
-            signature_image.save(signature_path)
-
-            # Open and resize the image
-            print(f"Opening image file: {signature_path}")
-            resized_image = PILImage.open(signature_path)
-            print(f"Original image size: {resized_image.size}")
-            resized_image = resize_image_to_fit_cell(resized_image, 200, 50)
-            resized_image.save(resized_image_path)  # Save resized image to a file
-            print(f"Resized image saved to: {resized_image_path}")
-
+            resized_image_path = f'resized_signature_image_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
             try:
+                signature_image = PILImage.fromarray(
+                    st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
+                signature_image.save(signature_path)
+
+                # Open and resize the image
+                print(f"Opening image file: {signature_path}")
+                resized_image = PILImage.open(signature_path)
+                print(f"Original image size: {resized_image.size}")
+                resized_image = resize_image_to_fit_cell(resized_image, 200, 50)
+                resized_image.save(resized_image_path)  # Save resized image to a file
+                print(f"Resized image saved to: {resized_image_path}")
+
                 # Call the function to replace placeholders
                 replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, resized_image_path)
             except Exception as e:
@@ -2327,22 +2328,7 @@ elif st.session_state.step == 11:
                 error_details = traceback.format_exc()
 
                 # Display the error message on the screen
-                st.error(f"An error occurred: {str(e)}")
-                
-                # Optionally write the error details to a file (in-memory)
-                error_file = io.StringIO()
-                error_file.write("Error occurred while replacing placeholders:\n")
-                error_file.write(error_details)
-                error_file.seek(0)  # Move cursor to the start of the file
-
-                # Provide a download button for the error log
-                st.download_button(
-                    label="Download Error Log",
-                    data=error_file,
-                    file_name="error_log.txt",
-                    mime="text/plain"
-                )
-
+                st.error(f"Please take screenshot of the following error: \n{str(e)}")
                 # Rerun the app to refresh the screen
                 st.experimental_rerun()
 
