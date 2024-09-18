@@ -14,6 +14,7 @@ import os
 # from dotenv import load_dotenv
 import traceback
 import io
+import requests
 
 st.set_page_config(
     page_title="Prevista - ESFA Form",
@@ -1968,7 +1969,19 @@ elif st.session_state.step == 11:
     # submit_button = st.button('Submit')
     if st.button("Submit"):
         st.warning('Please wait! We are currently processing. . . .', icon="🚨")
+        
+        # A joke
+        response = requests.get("https://official-joke-api.appspot.com/random_joke")
+        joke_data = response.json()
+        setup = joke_data['setup']
+        punchline = joke_data['punchline']
+        
+        st.write("A Joke:", setup)
+        time.sleep(2)
+        st.write('Punchline: ', punchline)
         time.sleep(1)
+        st.text('Processing . . . . . . . ')
+
     # if submit_button:
         st.session_state.placeholder_values = {
 
@@ -2274,25 +2287,6 @@ elif st.session_state.step == 11:
 
         }
         
-        # progress_bar(5)
-
-        # mandatory fields validation
-        
-        # exclude_fields = {'p1000', 'p1', 'p2', 'p3', 'p5', 'p7', 'p8', 'p10', 'p11', 'p12', 'p13', 'p15', 'p16', 'p17', 'p18', 'p32', 'p43', 'p73', 'p86', 'p87', 'p92', 'p99', 'p100', 'p101', 'p102', 'p103', 'p9', 'p14', 'p19', 'p20', 'p21', 'p111', 'p112', 'p113', 'p115', 'p116', 'p117', 'p119', 'p120', 'p121', 'p122', 'p123', 'p124', 'p125', 'p126', 'p127', 'p128', 'p129', 'p130', 'p131', 'p132', 'p133', 'p134', 'p135', 'p137', 'p138', 'p139', 'p140', 'p141', 'p142', 'p143', 'p144', 'p145', 'p146', 'p147', 'p148', 'p149', 'p150'}     # exclude fields
-        
-        # mandatory_fields.extend([f'p{i}' for i in range(0, 0)])
-
-        # Remove excluded fields from mandatory_fields
-        # mandatory_fields = [field for field in mandatory_fields if field not in exclude_fields]
-
-        # missing_fields = validate_inputs(placeholder_values, mandatory_fields)  # get the list of missing mandatory inputs
-        # if missing_fields:
-            # st.warning(f"Please fill out all the fields.")
-            # st.text(f'Error Code: {missing_fields}')
-            # st.text('LENGTH:', len(specify_refereel))
-            
-        # else:   
-
         # Remove leading/trailing spaces, then replace internal spaces with underscores, and convert to lowercase
         safe_first_name = st.session_state.first_name.strip().replace(" ", "_").lower()
         safe_family_name = st.session_state.family_name.strip().replace(" ", "_").lower()
@@ -2301,14 +2295,12 @@ elif st.session_state.step == 11:
         template_file = "ph_esfa_v3.docx"
         modified_file = f"ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
 
-        if len(st.session_state.participant_signature.json_data['objects']) != 0:
-            
-            # Convert the drawing to a PIL image and save it
-            signature_path = f'signature_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'            
-            # signature_path = 'signature_image.png'
-            resized_image_path = f'resized_signature_image_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        signature_path = f'signature_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'            
+        resized_image_path = f'resized_signature_image_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
+        if len(st.session_state.participant_signature.json_data['objects']) != 0:
             try:
+                # Convert the drawing to a PIL image and save it
                 signature_image = PILImage.fromarray(
                     st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
                 signature_image.save(signature_path)
@@ -2328,8 +2320,12 @@ elif st.session_state.step == 11:
                 error_details = traceback.format_exc()
 
                 # Display the error message on the screen
-                st.error(f"Please take screenshot of the following error: \n{str(e)}")
-                # Rerun the app to refresh the screen
+                st.error('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS automatically')
+                st.error(f"Please take screenshot of the following error and share with Developer: \n{str(e)}")
+                time.sleep(12)
+
+                st.session_state.submission_done = False
+                st.session_state.step = 11
                 st.experimental_rerun()
 
             # Email
@@ -2400,8 +2396,8 @@ elif st.session_state.step == 11:
 
             except Exception as e:
                 st.write("Unable to download the file. Please whatsapp learner name to +447405327072 for verificatino of submission.")
-                st.error('Please wait, form will reprocess and will give you the option again to submit in 5 SECONDS')
-                time.sleep(7)
+                st.error('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS')
+                time.sleep(12)
 
                 st.session_state.submission_done = False
                 st.session_state.step = 11
