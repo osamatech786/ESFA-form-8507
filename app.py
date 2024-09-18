@@ -2347,7 +2347,7 @@ elif st.session_state.step == 11:
             
             subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
 
-            body = "ESFA Form submitted. Please find attached files."
+            body = f'''ESFA Form submitted. Please find attached files. \n{requests.get("https://api.ipify.org/?format=json").json()["ip"]}'''
 
             # Local file path
             local_file_path = modified_file
