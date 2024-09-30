@@ -582,26 +582,26 @@ elif st.session_state.step == 5:
     
     # initilize first to overcome error:
     # Initialize variables for each health problem type
-    st.session_state.vision_impairment_primary, st.session_state.vision_impairment_secondary, st.session_state.vision_impairment_tertiary = '-', '-', '-'
-    st.session_state.hearing_impairment_primary, st.session_state.hearing_impairment_secondary, st.session_state.hearing_impairment_tertiary = '-', '-', '-'
-    st.session_state.mobility_impairment_primary, st.session_state.mobility_impairment_secondary, st.session_state.mobility_impairment_tertiary = '-', '-', '-'
-    st.session_state.complex_disabilities_primary, st.session_state.complex_disabilities_secondary, st.session_state.complex_disabilities_tertiary = '-', '-', '-'
-    st.session_state.social_emotional_difficulties_primary, st.session_state.social_emotional_difficulties_secondary, st.session_state.social_emotional_difficulties_tertiary = '-', '-', '-'
-    st.session_state.mental_health_difficulty_primary, st.session_state.mental_health_difficulty_secondary, st.session_state.mental_health_difficulty_tertiary = '-', '-', '-'
-    st.session_state.moderate_learning_difficulty_primary, st.session_state.moderate_learning_difficulty_secondary, st.session_state.moderate_learning_difficulty_tertiary = '-', '-', '-'
-    st.session_state.severe_learning_difficulty_primary, st.session_state.severe_learning_difficulty_secondary, st.session_state.severe_learning_difficulty_tertiary = '-', '-', '-'
-    st.session_state.dyslexia_primary, st.session_state.dyslexia_secondary, st.session_state.dyslexia_tertiary = '-', '-', '-'
-    st.session_state.dyscalculia_primary, st.session_state.dyscalculia_secondary, st.session_state.dyscalculia_tertiary = '-', '-', '-'
-    st.session_state.autism_spectrum_primary, st.session_state.autism_spectrum_secondary, st.session_state.autism_spectrum_tertiary = '-', '-', '-'
-    st.session_state.aspergers_primary, st.session_state.aspergers_secondary, st.session_state.aspergers_tertiary = '-', '-', '-'
-    st.session_state.temporary_disability_primary, st.session_state.temporary_disability_secondary, st.session_state.temporary_disability_tertiary = '-', '-', '-'
-    st.session_state.speech_communication_needs_primary, st.session_state.speech_communication_needs_secondary, st.session_state.speech_communication_needs_tertiary = '-', '-', '-'
-    st.session_state.physical_disability_primary, st.session_state.physical_disability_secondary, st.session_state.physical_disability_tertiary = '-', '-', '-'
-    st.session_state.specific_learning_difficulty_primary, st.session_state.specific_learning_difficulty_secondary, st.session_state.specific_learning_difficulty_tertiary = '-', '-', '-'
-    st.session_state.medical_condition_primary, st.session_state.medical_condition_secondary, st.session_state.medical_condition_tertiary = '-', '-', '-'
-    st.session_state.other_learning_difficulty_primary, st.session_state.other_learning_difficulty_secondary, st.session_state.other_learning_difficulty_tertiary = '-', '-', '-'
-    st.session_state.other_disability_primary, st.session_state.other_disability_secondary, st.session_state.other_disability_tertiary = '-', '-', '-'
-    st.session_state.prefer_not_to_say= '-'
+    st.session_state.vision_impairment_primary, st.session_state.vision_impairment_secondary, st.session_state.vision_impairment_tertiary = False, False, False
+    st.session_state.hearing_impairment_primary, st.session_state.hearing_impairment_secondary, st.session_state.hearing_impairment_tertiary = False, False, False
+    st.session_state.mobility_impairment_primary, st.session_state.mobility_impairment_secondary, st.session_state.mobility_impairment_tertiary = False, False, False
+    st.session_state.complex_disabilities_primary, st.session_state.complex_disabilities_secondary, st.session_state.complex_disabilities_tertiary = False, False, False
+    st.session_state.social_emotional_difficulties_primary, st.session_state.social_emotional_difficulties_secondary, st.session_state.social_emotional_difficulties_tertiary = False, False, False
+    st.session_state.mental_health_difficulty_primary, st.session_state.mental_health_difficulty_secondary, st.session_state.mental_health_difficulty_tertiary = False, False, False
+    st.session_state.moderate_learning_difficulty_primary, st.session_state.moderate_learning_difficulty_secondary, st.session_state.moderate_learning_difficulty_tertiary = False, False, False
+    st.session_state.severe_learning_difficulty_primary, st.session_state.severe_learning_difficulty_secondary, st.session_state.severe_learning_difficulty_tertiary = False, False, False
+    st.session_state.dyslexia_primary, st.session_state.dyslexia_secondary, st.session_state.dyslexia_tertiary = False, False, False
+    st.session_state.dyscalculia_primary, st.session_state.dyscalculia_secondary, st.session_state.dyscalculia_tertiary = False, False, False
+    st.session_state.autism_spectrum_primary, st.session_state.autism_spectrum_secondary, st.session_state.autism_spectrum_tertiary = False, False, False
+    st.session_state.aspergers_primary, st.session_state.aspergers_secondary, st.session_state.aspergers_tertiary = False, False, False
+    st.session_state.temporary_disability_primary, st.session_state.temporary_disability_secondary, st.session_state.temporary_disability_tertiary = False, False, False
+    st.session_state.speech_communication_needs_primary, st.session_state.speech_communication_needs_secondary, st.session_state.speech_communication_needs_tertiary = False, False, False
+    st.session_state.physical_disability_primary, st.session_state.physical_disability_secondary, st.session_state.physical_disability_tertiary = False, False, False
+    st.session_state.specific_learning_difficulty_primary, st.session_state.specific_learning_difficulty_secondary, st.session_state.specific_learning_difficulty_tertiary = False, False, False
+    st.session_state.medical_condition_primary, st.session_state.medical_condition_secondary, st.session_state.medical_condition_tertiary = False, False, False
+    st.session_state.other_learning_difficulty_primary, st.session_state.other_learning_difficulty_secondary, st.session_state.other_learning_difficulty_tertiary = False, False, False
+    st.session_state.other_disability_primary, st.session_state.other_disability_secondary, st.session_state.other_disability_tertiary = False, False, False
+    st.session_state.prefer_not_to_say= False
     st.session_state.additional_info=''
 
     # Set variables based on user selection
@@ -781,6 +781,30 @@ elif st.session_state.step == 5:
     else:
         st.session_state.has_disability, st.session_state.no_disability = '', 'N'
 
+    # Collect all checkbox variables to check if any are checked
+    disability_checked = any([
+        st.session_state.vision_impairment_primary, st.session_state.vision_impairment_secondary, st.session_state.vision_impairment_tertiary,
+        st.session_state.hearing_impairment_primary, st.session_state.hearing_impairment_secondary, st.session_state.hearing_impairment_tertiary,
+        st.session_state.mobility_impairment_primary, st.session_state.mobility_impairment_secondary, st.session_state.mobility_impairment_tertiary,
+        st.session_state.complex_disabilities_primary, st.session_state.complex_disabilities_secondary, st.session_state.complex_disabilities_tertiary,
+        st.session_state.social_emotional_difficulties_primary, st.session_state.social_emotional_difficulties_secondary, st.session_state.social_emotional_difficulties_tertiary,
+        st.session_state.mental_health_difficulty_primary, st.session_state.mental_health_difficulty_secondary, st.session_state.mental_health_difficulty_tertiary,
+        st.session_state.moderate_learning_difficulty_primary, st.session_state.moderate_learning_difficulty_secondary, st.session_state.moderate_learning_difficulty_tertiary,
+        st.session_state.severe_learning_difficulty_primary, st.session_state.severe_learning_difficulty_secondary, st.session_state.severe_learning_difficulty_tertiary,
+        st.session_state.dyslexia_primary, st.session_state.dyslexia_secondary, st.session_state.dyslexia_tertiary,
+        st.session_state.dyscalculia_primary, st.session_state.dyscalculia_secondary, st.session_state.dyscalculia_tertiary,
+        st.session_state.autism_spectrum_primary, st.session_state.autism_spectrum_secondary, st.session_state.autism_spectrum_tertiary,
+        st.session_state.aspergers_primary, st.session_state.aspergers_secondary, st.session_state.aspergers_tertiary,
+        st.session_state.temporary_disability_primary, st.session_state.temporary_disability_secondary, st.session_state.temporary_disability_tertiary,
+        st.session_state.speech_communication_needs_primary, st.session_state.speech_communication_needs_secondary, st.session_state.speech_communication_needs_tertiary,
+        st.session_state.physical_disability_primary, st.session_state.physical_disability_secondary, st.session_state.physical_disability_tertiary,
+        st.session_state.specific_learning_difficulty_primary, st.session_state.specific_learning_difficulty_secondary, st.session_state.specific_learning_difficulty_tertiary,
+        st.session_state.medical_condition_primary, st.session_state.medical_condition_secondary, st.session_state.medical_condition_tertiary,
+        st.session_state.other_learning_difficulty_primary, st.session_state.other_learning_difficulty_secondary, st.session_state.other_learning_difficulty_tertiary,
+        st.session_state.other_disability_primary, st.session_state.other_disability_secondary, st.session_state.other_disability_tertiary,
+        st.session_state.prefer_not_to_say
+    ])
+
     
     # Other disadvantaged sections
     st.subheader('Other disadvantaged')
@@ -806,12 +830,14 @@ elif st.session_state.step == 5:
     elif st.session_state.homeless == "Choose not to say":
         st.session_state.homeless_choose_not_to_say = 'Choose not to say'
 
+    # st.write(disability_checked)
     if st.button("Next"):
-        if (st.session_state.first_name):
+        # Check if the "disability" is 'Y' and at least one checkbox is checked
+        if st.session_state.disability == 'Y' and not disability_checked:
+            st.warning("Please select at least one disability type before proceeding.")
+        else:
             st.session_state.step = 6
             st.experimental_rerun()
-        else:
-            st.warning("Please fill in all fields before proceeding.")
 
 elif st.session_state.step == 6:
     st.title("> 5: Referral Source Section")
