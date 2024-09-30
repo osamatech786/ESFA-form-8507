@@ -11,7 +11,7 @@ from email.message import EmailMessage
 import shutil
 import re
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import traceback
 # import io
 import requests
@@ -31,6 +31,7 @@ st.set_page_config(
 # add render support along with st.secret
 def get_secret(key):
     try:
+        load_dotenv()                                     # uncomment import of this library!
         # Attempt to get the secret from environment variables
         secret = os.environ.get(key)
         if secret is None:
@@ -1000,7 +1001,8 @@ elif st.session_state.step == 7:
         )
 
         # Setting 'X' for chosen inactive status
-        st.session_state.inactive_status_val = 'Y' if st.session_state.inactive_status == "Y" else 'N'
+        st.session_state.inactive_status_val = 'Y' if st.session_state.inactive_status == "Y" or st.session_state.economically_inactive_val == 'X' else 'N'
+
 
         st.session_state.inactive_evidence_type_val = st.text_input("Type of evidence for Economically Inactive Status including self-declaration statement.")
         st.session_state.inactive_evidence_date_val = st.date_input("Date of issue of evidence", format='DD/MM/YYYY')
