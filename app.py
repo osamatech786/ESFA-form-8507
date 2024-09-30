@@ -1097,7 +1097,7 @@ elif st.session_state.step == 7:
         if isinstance(st.session_state.get("benefit_claim_date_val"), str):
             st.session_state.benefit_claim_date_val = datetime.strptime(st.session_state.get("benefit_claim_date_val"), "%d-%m-%Y").date()
 
-        # Date of Birth
+        # Date of Benefit Claim Date
         st.session_state.benefit_claim_date_val = st.date_input(
             label="From what date has the above claim been in effect?",  # Label for the field
             value=st.session_state.get("benefit_claim_date_val"),  # Correctly access benefit_claim_date_val from session state
@@ -1992,10 +1992,10 @@ elif st.session_state.step == 11:
 
     st.text("Signature:")
     st.session_state.participant_signature = st_canvas(
-        fill_color="rgba(255, 255, 255, 1)",  
+        fill_color="rgba(255, 255, 255, 1)",
         stroke_width=5,
         stroke_color="rgb(0, 0, 0)",  # Black stroke color
-        background_color="white",  # White background color
+        background_color="#ffffcc",  # background color
         width=400,
         height=150,
         drawing_mode="freedraw",
