@@ -289,6 +289,8 @@ if 'files' not in st.session_state:
 if 'step' not in st.session_state:
     st.session_state.step = 1
     st.session_state.submission_done = False
+    if 'benefit_claim_date_val' not in st.session_state: st.session_state.benefit_claim_date_val = None
+
     
 # mandatory fields validation
 # exclude_fields = {}     
@@ -1015,7 +1017,7 @@ elif st.session_state.step == 7:
     st.session_state.employer_contact_position_val, st.session_state.employer_contact_email_val, st.session_state.employer_contact_phone_val = '', '', ''
     st.session_state.employer_edrs_number_val, st.session_state.living_wage_val, st.session_state.employment_hours_val_0, st.session_state.employment_hours_val_6 = '', '', '', ''
     st.session_state.claiming_benefits_val, st.session_state.sole_claimant_val, st.session_state.benefits_list_val = '', '', ''
-    st.session_state.other_benefit_val, st.session_state.benefit_claim_date_val = '', ''
+    st.session_state.other_benefit_val = ''
     
     # Initialize variables for benefits
     st.session_state.universal_credit_val = ''
@@ -1089,9 +1091,27 @@ elif st.session_state.step == 7:
         if "Other - please state" in st.session_state.benefits_list:
             st.session_state.other_benefit_val = st.text_input("Please state other benefit")
 
+
         # Input for the date of claim
-        st.session_state.benefit_claim_date_val = st.date_input("From what date has the above claim been in effect?", format='DD/MM/YYYY')
-        st.session_state.benefit_claim_date_val = st.session_state.benefit_claim_date_val.strftime("%d-%m-%Y")
+        # Check if benefit_claim_date_val is a string and convert it back to a date object
+        if isinstance(st.session_state.get("benefit_claim_date_val"), str):
+            st.session_state.benefit_claim_date_val = datetime.strptime(st.session_state.get("benefit_claim_date_val"), "%d-%m-%Y").date()
+
+        # Date of Birth
+        st.session_state.benefit_claim_date_val = st.date_input(
+            label="From what date has the above claim been in effect?",  # Label for the field
+            value=st.session_state.get("benefit_claim_date_val"),  # Correctly access benefit_claim_date_val from session state
+            min_value=date(1900, 1, 1),  # Minimum selectable date
+            max_value=date.today(),  # Maximum selectable date
+            help="Choose a date",  # Tooltip text
+            format='DD/MM/YYYY'
+        )
+        if not (st.session_state.benefit_claim_date_val):
+            st.warning("Please choose Benefit Claim Date.")
+            st.stop()
+        else:
+            st.session_state.benefit_claim_date_val = st.session_state.benefit_claim_date_val.strftime("%d-%m-%Y")
+            
 
 
 
@@ -2186,7 +2206,7 @@ elif st.session_state.step == 11:
             'p221': st.session_state.incapacity_benefit_val,
             'p222': st.session_state.personal_independence_payment_val,
             'p223': st.session_state.other_benefit_val,
-            'p224': st.session_state.benefit_claim_date_val,                   
+            'p224': st.session_state.benefit_claim_date_val,
             'p225': st.session_state.contact_surveys_val,
             'p226': st.session_state.contact_phone_val,
             'p227': st.session_state.contact_email_val,
