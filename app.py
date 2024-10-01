@@ -2064,7 +2064,7 @@ elif st.session_state.step == 11:
             time.sleep(2)
             st.write('Punchline: ', punchline)
         except:
-            st.write("Unable to access Joke because of internet!")
+            st.warning("Unable to access Joke because of internet!")
         time.sleep(1)
         st.text('Processing . . . . . . . ')
 
