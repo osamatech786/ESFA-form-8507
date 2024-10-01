@@ -73,7 +73,7 @@ def is_valid_email(email):
     # Match the entire email against the pattern
     return re.match(pattern, email, re.VERBOSE) is not None
 
-def replace_placeholders(template_file, modified_file, placeholder_values, resized_image_path):
+def replace_placeholders(template_file, modified_file, placeholder_values, resized_image_path_1, resized_image_path_2):
     try:
         print(f"Copying template file '{template_file}' to '{modified_file}'...")
         shutil.copy(template_file, modified_file)
@@ -123,48 +123,51 @@ def replace_placeholders(template_file, modified_file, placeholder_values, resiz
                                 print(f"Updated run text in table cell: '{run_text}' -> '{run_updated_text}'")
                                 run.text = run_updated_text
 
-        # Check and handle signature placeholder
-        print("Inspecting document for 'p230' placeholder...")
+        # Check and handle signature placeholders
+        print("Inspecting document for 'p230' and 'p234' placeholders...")
         signature_placeholder_found = False
 
-        # Check paragraphs
+        # Function to insert an image when a placeholder is found
+        def insert_signature_image(para, image_path):
+            try:
+                print(f"Adding picture to paragraph or cell from path: {image_path}")
+                para.add_run().add_picture(image_path, width=Inches(2))
+                print("Inserted signature image.")
+                return True
+            except Exception as img_e:
+                print(f"An error occurred with image processing: {img_e}")
+                return False
+
+        # Check paragraphs for both 'p230' and 'p234'
         for para in doc.paragraphs:
             para_text = para.text.strip()  # Remove any extra spaces around text
-            while 'p230' in para_text:
+            
+            if 'p230' in para_text:
                 print(f"Found 'p230' in paragraph: '{para_text}'")
-                para_text = para_text.replace('p230', '').strip()  # Remove 'p230' and any leading/trailing spaces
-                para.text = para_text
-                
-                try:
-                    # Add picture to the paragraph
-                    print(f"Adding picture to paragraph from path: {resized_image_path}")
-                    para.add_run().add_picture(resized_image_path, width=Inches(2))
-                    print("Inserted signature image into paragraph.")
-                    signature_placeholder_found = True
-                except Exception as img_e:
-                    print(f"An error occurred with image processing: {img_e}")
+                para.text = para_text.replace('p230', '').strip()
+                signature_placeholder_found = insert_signature_image(para, resized_image_path_1)
+            
+            if 'p234' in para_text:
+                print(f"Found 'p234' in paragraph: '{para_text}'")
+                para.text = para_text.replace('p234', '').strip()
+                signature_placeholder_found = insert_signature_image(para, resized_image_path_2)
 
-        # Check table cells again in case the placeholder was missed
-        if not signature_placeholder_found:
-            print("Checking table cells for 'p230'...")
-            for table in doc.tables:
-                for row in table.rows:
-                    for cell in row.cells:
-                        for para in cell.paragraphs:
-                            para_text = para.text.strip()
-                            while 'p230' in para_text:
-                                print(f"Found 'p230' in table cell paragraph: '{para_text}'")
-                                para_text = para_text.replace('p230', '').strip()
-                                para.text = para_text
-                                
-                                try:
-                                    # Add picture to the table cell
-                                    print(f"Adding picture to table cell from path: {resized_image_path}")
-                                    para.add_run().add_picture(resized_image_path, width=Inches(2))
-                                    print("Inserted signature image into table cell.")
-                                    signature_placeholder_found = True
-                                except Exception as img_e:
-                                    print(f"An error occurred with image processing: {img_e}")
+        # Check table cells for 'p230' and 'p234'
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for para in cell.paragraphs:
+                        para_text = para.text.strip()
+                        
+                        if 'p230' in para_text:
+                            print(f"Found 'p230' in table cell paragraph: '{para_text}'")
+                            para.text = para_text.replace('p230', '').strip()
+                            signature_placeholder_found = insert_signature_image(para, resized_image_path_1)
+                        
+                        if 'p234' in para_text:
+                            print(f"Found 'p234' in table cell paragraph: '{para_text}'")
+                            para.text = para_text.replace('p234', '').strip()
+                            signature_placeholder_found = insert_signature_image(para, resized_image_path_2)
 
         if not signature_placeholder_found:
             print("No signature placeholder found.")
@@ -176,6 +179,7 @@ def replace_placeholders(template_file, modified_file, placeholder_values, resiz
 
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
     # # file download button
     # with open(modified_file, 'rb') as f:
@@ -332,7 +336,7 @@ if st.session_state.step == 1:
 
     if st.button("Next"):
         if (st.session_state.selected_option!='    '):
-            st.session_state.step = 9
+            st.session_state.step = 2
             st.experimental_rerun()
         else:
             st.warning("Please Choose Valid Support Option.")
@@ -1989,26 +1993,17 @@ elif st.session_state.step == 10:
 
 elif st.session_state.step == 11:
     st.title("> 10: Declarations")
-
-    st.header('Declarations')
-
-    # st.subheader('Provider Confirmation')
     st.text(
-        'I hereby confirm that I have read, understood and agree with the contents of this document and above privacy notice, and understand that the programme is funded by the Mayor of London.'
+        'We hereby confirm that I have read, understood and agree with the contents of this document and above privacy notice, and understand that the programme is funded by the Mayor of London.'
     )
-
-
-    st.subheader('Participant Declaration')
+    st.header('Participant Declaration')
     st.text_area(
-        'Participant Declaration',
-        'I certify that I have provided all of the necessary information to confirm my eligibility for the Funded Provision.'
+        'Declaration',
+        f'I certify that I have provided all of the necessary information to confirm my eligibility for the Provision. \nI also consent for the named Training Provider to collect further evidence, from a 3rd party Training Provider, to support a progression claim on my behalf (where applicable).'
+
     )
-
-
-    st.subheader('Participant Signature')
-
-    st.text("Signature:")
-    st.session_state.participant_signature = st_canvas(
+    st.text("Participant Signature:")
+    st.session_state.participant_signature_1 = st_canvas(
         fill_color="rgba(255, 255, 255, 1)",
         stroke_width=5,
         stroke_color="rgb(0, 0, 0)",  # Black stroke color
@@ -2016,17 +2011,41 @@ elif st.session_state.step == 11:
         width=400,
         height=150,
         drawing_mode="freedraw",
+        key='p'
+    )
+    # Set today's date automatically and display it
+    st.session_state.date_signed = date.today().strftime("%d-%m-%Y")
+    st.write(f"Date: **{st.session_state.date_signed}**")
+
+    st.header('Training Provider Declarations')
+    st.text_area(
+        'Declaration',
+        'I certify that I have seen and verified the supporting evidence as indicated above, to confirm the Participant eligibility for ESF funding and this specific project.'
     )
 
-    st.session_state.date_signed = st.date_input(
-    label="Date",
-    value=date.today(),  # Default date
-    min_value=date(1900, 1, 1),  # Minimum selectable date
-    max_value=date(2025, 12, 31),  # Maximum selectable date
-    help="Choose a date",  # Tooltip text
-    format='DD/MM/YYYY'
-)
-    st.session_state.date_signed = st.session_state.date_signed.strftime("%d-%m-%Y")
+    st.session_state.tp_name = st.text_input('Name')
+    st.session_state.tp_position = st.text_input('Position')
+    # Validation to check if fields are empty
+    if not st.session_state.tp_name or not st.session_state.tp_position:
+        st.warning("Please fill in both Name and Position before proceeding.")
+        st.stop()
+
+    st.text("Training Provider Signature:")
+    st.session_state.participant_signature_2 = st_canvas(
+        fill_color="rgba(255, 255, 255, 1)",
+        stroke_width=5,
+        stroke_color="rgb(0, 0, 0)",  # Black stroke color
+        background_color="#ffffcc",  # background color
+        width=400,
+        height=150,
+        drawing_mode="freedraw",
+        key='tp'
+    )
+
+    # Set today's date automatically and display it
+    st.write(f"Date: **{st.session_state.date_signed}**")
+
+
     
 
 # ####################################################################################################################################
@@ -2348,6 +2367,8 @@ elif st.session_state.step == 11:
             'p303': len(st.session_state.selected_levels),
             # 'p304': referrall,
             'p305': st.session_state.specify_refereel,
+            'p232': st.session_state.tp_name,
+            'p233': st.session_state.tp_position,
             
 
         }
@@ -2360,27 +2381,30 @@ elif st.session_state.step == 11:
         template_file = "ph_esfa_v3.docx"
         modified_file = f"ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
 
-        signature_path = f'signature_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'            
-        resized_image_path = f'resized_signature_image_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        # Define paths for both signatures
+        signature_path_1 = f'signature_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        resized_image_path_1 = f'resized_signature_image_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
-        if len(st.session_state.participant_signature.json_data['objects']) != 0:
+        signature_path_2 = f'signature_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        resized_image_path_2 = f'resized_signature_image_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+
+        # Check if the first signature exists in the session state
+        if 'participant_signature_1' in st.session_state and len(st.session_state.participant_signature_1.json_data['objects']) != 0:
             try:
-                # Convert the drawing to a PIL image and save it
-                signature_image = PILImage.fromarray(
-                    st.session_state.participant_signature.image_data.astype('uint8'), 'RGBA')
-                signature_image.save(signature_path)
+                # Convert the first drawing to a PIL image and save it
+                signature_image_1 = PILImage.fromarray(
+                    st.session_state.participant_signature_1.image_data.astype('uint8'), 'RGBA')
+                signature_image_1.save(signature_path_1)
 
-                # Open and resize the image
-                print(f"Opening image file: {signature_path}")
-                resized_image = PILImage.open(signature_path)
-                print(f"Original image size: {resized_image.size}")
-                resized_image = resize_image_to_fit_cell(resized_image, 200, 50)
-                resized_image.save(resized_image_path)  # Save resized image to a file
-                print(f"Resized image saved to: {resized_image_path}")
-
-                # Call the function to replace placeholders
-                replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, resized_image_path)
+                # Open and resize the first image
+                print(f"Opening image file: {signature_path_1}")
+                resized_image_1 = PILImage.open(signature_path_1)
+                print(f"Original image size (signature 1): {resized_image_1.size}")
+                resized_image_1 = resize_image_to_fit_cell(resized_image_1, 200, 50)
+                resized_image_1.save(resized_image_path_1)  # Save resized image to a file
+                print(f"Resized image saved to: {resized_image_path_1}")
             except Exception as e:
+                print(f"An error occurred while processing the first signature image: {e}")
                 # Display the error message on the screen
                 st.error('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS automatically')
                 st.error(f"Please take screenshot of the following error and share with Developer: \n{str(e)}")
@@ -2390,76 +2414,107 @@ elif st.session_state.step == 11:
                 st.session_state.step = 11
                 st.experimental_rerun()
 
-            # Email
-
-            # Sender email credentials
-
-            # Credentials: Streamlit host st.secrets
-            # sender_email = st.secrets["sender_email"]
-            # sender_password = st.secrets["sender_password"]
-            sender_email = get_secret("sender_email")
-            sender_password = get_secret("sender_password")
-            # sender_email = 'dummy'
-            # sender_password = 'dummy'            
-
-            receiver_email = sender_email
-            
-            # Credentials: Local env
-            # load_dotenv()                                     # uncomment import of this library!
-            # sender_email = os.getenv('EMAIL')
-            # sender_password = os.getenv('PASSWORD')
-            
-            subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
-
-            body = f'''ESFA Form submitted. Please find attached files.'''
-
-            # Local file path
-            local_file_path = modified_file
-
-            # Send email with attachments
-            if st.session_state.files or local_file_path:
-                # Remove duplicates while preserving order, using file name and size as the criteria
-                seen = set()
-                unique_files = []
-                
-                for file in st.session_state.files:
-                    file_identifier = (file.name, file.size)  # Use file name and size as a unique identifier
-                    if file_identifier not in seen:
-                        unique_files.append(file)
-                        seen.add(file_identifier)
-                
-                st.session_state.files = unique_files  # Update with the filtered list
-                try:
-                    send_email_with_attachments(sender_email, sender_password, receiver_email, subject, body, st.session_state.files, local_file_path)
-                except Exception as e:
-                    st.error(f"Failed to send email: {e}")
-
-                    # Provide file download button as a fallback
-                    st.warning("Email couldn't be sent, but you can download the file directly.")
-                    if local_file_path:
-                        with open(local_file_path, 'rb') as f:
-                            file_contents = f.read()
-                            st.download_button(
-                                label="Download Your File",
-                                data=file_contents,
-                                file_name=local_file_path.split('/')[-1],
-                                mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                            )
-                    st.warning('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS')
-                    time.sleep(12)
-
-                    st.session_state.submission_done = False
-                    st.session_state.step = 11
-                    st.experimental_rerun()
-                                            
-                st.success("Submission Finished!")
-                st.session_state.submission_done = True
-
-            else:
-                st.warning("Please upload at least one file or specify a local file.")
-    
         else:
-            st.warning("SIGNATURE is missing! Please draw the signature.")
+            st.warning("Participant's SIGNATURE is missing! Please draw the signature.")
+            st.stop()
+
+        # Check if the second signature exists in the session state
+        if 'participant_signature_2' in st.session_state and len(st.session_state.participant_signature_2.json_data['objects']) != 0:
+            try:
+                # Convert the second drawing to a PIL image and save it
+                signature_image_2 = PILImage.fromarray(
+                    st.session_state.participant_signature_2.image_data.astype('uint8'), 'RGBA')
+                signature_image_2.save(signature_path_2)
+
+                # Open and resize the second image
+                print(f"Opening image file: {signature_path_2}")
+                resized_image_2 = PILImage.open(signature_path_2)
+                print(f"Original image size (signature 2): {resized_image_2.size}")
+                resized_image_2 = resize_image_to_fit_cell(resized_image_2, 200, 50)
+                resized_image_2.save(resized_image_path_2)  # Save resized image to a file
+                print(f"Resized image saved to: {resized_image_path_2}")
+            except Exception as e:
+                print(f"An error occurred while processing the first signature image: {e}")
+                # Display the error message on the screen
+                st.error('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS automatically')
+                st.error(f"Please take screenshot of the following error and share with Developer: \n{str(e)}")
+                time.sleep(12)
+
+                st.session_state.submission_done = False
+                st.session_state.step = 11
+                st.experimental_rerun()
+        else:
+            st.warning("Training Provider's SIGNATURE is missing! Please draw the signature.")
+            st.stop()
+        
+        # Call the function to replace placeholders with both resized images
+        replace_placeholders(template_file, modified_file, st.session_state.placeholder_values, resized_image_path_1, resized_image_path_2)
+
+        # Email
+
+        # Sender email credentials
+
+        # Credentials: Streamlit host st.secrets
+        # sender_email = st.secrets["sender_email"]
+        # sender_password = st.secrets["sender_password"]
+        sender_email = get_secret("sender_email")
+        sender_password = get_secret("sender_password")
+        # sender_email = 'dummy'
+        # sender_password = 'dummy'            
+
+        receiver_email = sender_email
+        
+        # Credentials: Local env
+        # load_dotenv()                                     # uncomment import of this library!
+        # sender_email = os.getenv('EMAIL')
+        # sender_password = os.getenv('PASSWORD')
+        
+        subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
+
+        body = f'''ESFA Form submitted. Please find attached files.'''
+
+        # Local file path
+        local_file_path = modified_file
+
+        # Send email with attachments
+        if st.session_state.files or local_file_path:
+            # Remove duplicates while preserving order, using file name and size as the criteria
+            seen = set()
+            unique_files = []
+            
+            for file in st.session_state.files:
+                file_identifier = (file.name, file.size)  # Use file name and size as a unique identifier
+                if file_identifier not in seen:
+                    unique_files.append(file)
+                    seen.add(file_identifier)
+            
+            st.session_state.files = unique_files  # Update with the filtered list
+            try:
+                send_email_with_attachments(sender_email, sender_password, receiver_email, subject, body, st.session_state.files, local_file_path)
+            except Exception as e:
+                st.error(f"Failed to send email: {e}")
+
+                # Provide file download button as a fallback
+                st.warning("Email couldn't be sent, but you can download the file directly.")
+                if local_file_path:
+                    with open(local_file_path, 'rb') as f:
+                        file_contents = f.read()
+                        st.download_button(
+                            label="Download Your File",
+                            data=file_contents,
+                            file_name=local_file_path.split('/')[-1],
+                            mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                        )
+                st.warning('Please wait, form will reprocess and will give you the option again to submit in 10 SECONDS')
+                time.sleep(12)
+
+                st.session_state.submission_done = False
+                st.session_state.step = 11
+                st.experimental_rerun()
+                                        
+            st.success("Submission Finished!")
+            st.session_state.submission_done = True
+
             
         if st.session_state.submission_done:
             try:
