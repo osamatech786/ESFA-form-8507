@@ -332,7 +332,7 @@ if st.session_state.step == 1:
 
     if st.button("Next"):
         if (st.session_state.selected_option!='    '):
-            st.session_state.step = 7
+            st.session_state.step = 9
             st.experimental_rerun()
         else:
             st.warning("Please Choose Valid Support Option.")
@@ -1815,6 +1815,7 @@ elif st.session_state.step == 9:
 
     st.subheader('Highest Level of Education at start')
     education_options = [
+        'Choose an option',  # Placeholder option
         'ISCED 0 - Lacking Foundation skills (below Primary Education)',
         'ISCED 1 - Primary Education',
         'ISCED 2 - GCSE D-G or 3-1/BTEC Level 1/Functional Skills Level 1',
@@ -1825,12 +1826,15 @@ elif st.session_state.step == 9:
 
     # Change from selectbox to multiselect
     st.session_state.selected_levels = st.selectbox(
-        'Select the highest level of education at start', education_options)
+        'Select the highest level of education at start',
+        options=education_options,
+        index=0  # Default to the placeholder option
+    )
 
-    # mandatory field validation
-    if len(st.session_state.selected_levels)==0:
-        # mandatory_fields.extend(['p303'])
-        pass
+    # Mandatory field validation
+    if st.session_state.selected_levels == 'Choose an option':
+        st.warning("Please select a valid education level before proceeding.")
+        st.stop()
 
     # Initialize marks
     st.session_state.p93, st.session_state.p94, st.session_state.p95, st.session_state.p96, st.session_state.p97, st.session_state.p98 = '-', '-', '-', '-', '-', '-'
