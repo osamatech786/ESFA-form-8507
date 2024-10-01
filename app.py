@@ -2054,15 +2054,17 @@ elif st.session_state.step == 11:
     if st.button("Submit"):
         st.warning('Please wait! We are currently processing. . . .', icon="🚨")
         
-        # A joke
-        response = requests.get("https://official-joke-api.appspot.com/random_joke")
-        joke_data = response.json()
-        setup = joke_data['setup']
-        punchline = joke_data['punchline']
-        
-        st.write("A Joke:", setup)
-        time.sleep(2)
-        st.write('Punchline: ', punchline)
+        try: # A joke
+            response = requests.get("https://official-joke-api.appspot.com/random_joke")
+            joke_data = response.json()
+            setup = joke_data['setup']
+            punchline = joke_data['punchline']
+            
+            st.write("A Joke:", setup)
+            time.sleep(2)
+            st.write('Punchline: ', punchline)
+        except:
+            st.write("Unable to access Joke because of internet!")
         time.sleep(1)
         st.text('Processing . . . . . . . ')
 
