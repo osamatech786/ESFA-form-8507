@@ -1305,7 +1305,13 @@ elif st.session_state.step == 7:
             "c. Some non-EEA nationals have an Identity Card (Biometric Permit) issued by the Home Office in place of a visa, confirming the participant’s right to stay, work or study in the UK – these cards are acceptable"
         ]
 
-        st.session_state.document_type = st.radio("Select the type of document:", document_options)
+        # Initially set the radio button without any selection
+        st.session_state.document_type = st.radio("Select the type of document:", options=document_options, index=None)
+
+        # Check if no selection is made
+        if not st.session_state.document_type:
+            st.warning("Please select the type of document before proceeding.")
+            st.stop()
         st.session_state.letter_uk_immigration, st.session_state.passport_endorsed, st.session_state.identity_card = '', '', ''
 
         if st.session_state.document_type == document_options[0]:
