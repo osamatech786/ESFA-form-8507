@@ -295,6 +295,47 @@ if 'step' not in st.session_state:
     st.session_state.submission_done = False
     if 'benefit_claim_date_val' not in st.session_state: st.session_state.benefit_claim_date_val = None
 
+    # Step 2: Personal Information initialization
+    st.session_state.title_mr, st.session_state.title_mrs, st.session_state.title_miss, st.session_state.title_ms = '', '', '', ''
+    st.session_state.title = ''
+    st.session_state.first_name = ''
+    st.session_state.middle_name = ''
+    st.session_state.family_name = ''
+    st.session_state.gender_m, st.session_state.gender_f, st.session_state.other_gender, st.session_state.other_gender_text = '', '', '', ''
+    st.session_state.gender = ''
+    st.session_state.date_of_birth = ''
+    st.session_state.current_age = ''
+    st.session_state.current_age_text = ''
+
+    # Step 3: Ethnicity initialization
+    st.session_state.ethnicity_category = ''
+    st.session_state.ethnicity = ''
+    st.session_state.ethnicity_code = ''
+    st.session_state.ethnicity_vars = {f'ethnicity_{i}': '' for i in range(31, 49)}
+    st.session_state.national_insurance_number = ''
+    st.session_state.house_no_name_street = ''
+    st.session_state.suburb_village = ''
+    st.session_state.town_city = ''
+    st.session_state.county = ''
+    st.session_state.country_of_domicile = ''
+    st.session_state.current_postcode = ''
+    st.session_state.postcode_prior_enrollment = ''
+    st.session_state.email_address = ''
+    st.session_state.primary_telephone_number = ''
+    st.session_state.secondary_telephone_number = ''
+    st.session_state.next_of_kin = 'N/A'
+    st.session_state.emergency_contact_phone_number = 'N/A'
+
+    # Step 4: Household initialization
+    st.session_state.household_selections = {}
+    st.session_state.no_member_employed_with_children = ''
+    st.session_state.no_member_employed_without_children = ''
+    st.session_state.single_adult_household_with_children = ''
+    st.session_state.unemployed_single_adult_household = ''
+    st.session_state.none_of_the_above = ''
+    st.session_state.household_filled = ''
+
+
     
 # mandatory fields validation
 # exclude_fields = {}     
@@ -589,26 +630,26 @@ elif st.session_state.step == 5:
     
     # initilize first to overcome error:
     # Initialize variables for each health problem type
-    st.session_state.vision_impairment_primary, st.session_state.vision_impairment_secondary, st.session_state.vision_impairment_tertiary = False, False, False
-    st.session_state.hearing_impairment_primary, st.session_state.hearing_impairment_secondary, st.session_state.hearing_impairment_tertiary = False, False, False
-    st.session_state.mobility_impairment_primary, st.session_state.mobility_impairment_secondary, st.session_state.mobility_impairment_tertiary = False, False, False
-    st.session_state.complex_disabilities_primary, st.session_state.complex_disabilities_secondary, st.session_state.complex_disabilities_tertiary = False, False, False
-    st.session_state.social_emotional_difficulties_primary, st.session_state.social_emotional_difficulties_secondary, st.session_state.social_emotional_difficulties_tertiary = False, False, False
-    st.session_state.mental_health_difficulty_primary, st.session_state.mental_health_difficulty_secondary, st.session_state.mental_health_difficulty_tertiary = False, False, False
-    st.session_state.moderate_learning_difficulty_primary, st.session_state.moderate_learning_difficulty_secondary, st.session_state.moderate_learning_difficulty_tertiary = False, False, False
-    st.session_state.severe_learning_difficulty_primary, st.session_state.severe_learning_difficulty_secondary, st.session_state.severe_learning_difficulty_tertiary = False, False, False
-    st.session_state.dyslexia_primary, st.session_state.dyslexia_secondary, st.session_state.dyslexia_tertiary = False, False, False
-    st.session_state.dyscalculia_primary, st.session_state.dyscalculia_secondary, st.session_state.dyscalculia_tertiary = False, False, False
-    st.session_state.autism_spectrum_primary, st.session_state.autism_spectrum_secondary, st.session_state.autism_spectrum_tertiary = False, False, False
-    st.session_state.aspergers_primary, st.session_state.aspergers_secondary, st.session_state.aspergers_tertiary = False, False, False
-    st.session_state.temporary_disability_primary, st.session_state.temporary_disability_secondary, st.session_state.temporary_disability_tertiary = False, False, False
-    st.session_state.speech_communication_needs_primary, st.session_state.speech_communication_needs_secondary, st.session_state.speech_communication_needs_tertiary = False, False, False
-    st.session_state.physical_disability_primary, st.session_state.physical_disability_secondary, st.session_state.physical_disability_tertiary = False, False, False
-    st.session_state.specific_learning_difficulty_primary, st.session_state.specific_learning_difficulty_secondary, st.session_state.specific_learning_difficulty_tertiary = False, False, False
-    st.session_state.medical_condition_primary, st.session_state.medical_condition_secondary, st.session_state.medical_condition_tertiary = False, False, False
-    st.session_state.other_learning_difficulty_primary, st.session_state.other_learning_difficulty_secondary, st.session_state.other_learning_difficulty_tertiary = False, False, False
-    st.session_state.other_disability_primary, st.session_state.other_disability_secondary, st.session_state.other_disability_tertiary = False, False, False
-    st.session_state.prefer_not_to_say= False
+    st.session_state.vision_impairment_primary, st.session_state.vision_impairment_secondary, st.session_state.vision_impairment_tertiary = '', '', ''
+    st.session_state.hearing_impairment_primary, st.session_state.hearing_impairment_secondary, st.session_state.hearing_impairment_tertiary = '', '', ''
+    st.session_state.mobility_impairment_primary, st.session_state.mobility_impairment_secondary, st.session_state.mobility_impairment_tertiary = '', '', ''
+    st.session_state.complex_disabilities_primary, st.session_state.complex_disabilities_secondary, st.session_state.complex_disabilities_tertiary = '', '', ''
+    st.session_state.social_emotional_difficulties_primary, st.session_state.social_emotional_difficulties_secondary, st.session_state.social_emotional_difficulties_tertiary = '', '', ''
+    st.session_state.mental_health_difficulty_primary, st.session_state.mental_health_difficulty_secondary, st.session_state.mental_health_difficulty_tertiary = '', '', ''
+    st.session_state.moderate_learning_difficulty_primary, st.session_state.moderate_learning_difficulty_secondary, st.session_state.moderate_learning_difficulty_tertiary = '', '', ''
+    st.session_state.severe_learning_difficulty_primary, st.session_state.severe_learning_difficulty_secondary, st.session_state.severe_learning_difficulty_tertiary = '', '', ''
+    st.session_state.dyslexia_primary, st.session_state.dyslexia_secondary, st.session_state.dyslexia_tertiary = '', '', ''
+    st.session_state.dyscalculia_primary, st.session_state.dyscalculia_secondary, st.session_state.dyscalculia_tertiary = '', '', ''
+    st.session_state.autism_spectrum_primary, st.session_state.autism_spectrum_secondary, st.session_state.autism_spectrum_tertiary = '', '', ''
+    st.session_state.aspergers_primary, st.session_state.aspergers_secondary, st.session_state.aspergers_tertiary = '', '', ''
+    st.session_state.temporary_disability_primary, st.session_state.temporary_disability_secondary, st.session_state.temporary_disability_tertiary = '', '', ''
+    st.session_state.speech_communication_needs_primary, st.session_state.speech_communication_needs_secondary, st.session_state.speech_communication_needs_tertiary = '', '', ''
+    st.session_state.physical_disability_primary, st.session_state.physical_disability_secondary, st.session_state.physical_disability_tertiary = '', '', ''
+    st.session_state.specific_learning_difficulty_primary, st.session_state.specific_learning_difficulty_secondary, st.session_state.specific_learning_difficulty_tertiary = '', '', ''
+    st.session_state.medical_condition_primary, st.session_state.medical_condition_secondary, st.session_state.medical_condition_tertiary = '', '', ''
+    st.session_state.other_learning_difficulty_primary, st.session_state.other_learning_difficulty_secondary, st.session_state.other_learning_difficulty_tertiary = '', '', ''
+    st.session_state.other_disability_primary, st.session_state.other_disability_secondary, st.session_state.other_disability_tertiary = '', '', ''
+    st.session_state.prefer_not_to_say= ''
     st.session_state.additional_info=''
 
     # Set variables based on user selection
@@ -655,7 +696,6 @@ elif st.session_state.step == 5:
             primary_checked = st.checkbox('Primary', key=f'{primary}_primary_checkbox')
             secondary_checked = st.checkbox('Secondary', key=f'{secondary}_secondary_checkbox') if secondary else False
             tertiary_checked = st.checkbox('Tertiary', key=f'{tertiary}_tertiary_checkbox') if tertiary else False
-
 
             # Set variables based on selections
             if primary_checked:
@@ -1806,11 +1846,8 @@ elif st.session_state.step == 8:
     #     p91 = 'N'
 
     if st.button("Next"):
-        if (st.session_state.first_name):
-            st.session_state.step = 9
-            st.experimental_rerun()
-        else:
-            st.warning("Please fill in all fields before proceeding.")
+        st.session_state.step = 9
+        st.experimental_rerun()
 
 elif st.session_state.step == 9:
     st.title("> 8: Current Skills, Experience, and IAG")
@@ -1985,11 +2022,8 @@ elif st.session_state.step == 10:
     st.session_state.contact_post_val = 'Y' if st.session_state.contact_post == "Y" else 'N'
 
     if st.button("Next"):
-        if (st.session_state.first_name):
-            st.session_state.step = 11
-            st.experimental_rerun()
-        else:
-            st.warning("Please fill in all fields before proceeding.")
+        st.session_state.step = 11
+        st.experimental_rerun()
 
 elif st.session_state.step == 11:
     st.title("> 10: Declarations")
