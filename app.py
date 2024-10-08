@@ -2102,7 +2102,7 @@ elif st.session_state.step == 11:
     if not st.session_state.tp_name or not st.session_state.tp_position:
         st.warning("Please fill in both Name and Position before proceeding.")
         st.stop()
-    st.write(st.session_state.tp_name)
+
     st.text("Training Provider Signature:")
     st.session_state.participant_signature_2 = st_canvas(
         fill_color="rgba(255, 255, 255, 1)",
@@ -2461,14 +2461,14 @@ elif st.session_state.step == 11:
 
         # Define input and output paths
         template_file = "resources\ph_esfa_v5.docx"
-        modified_file = f"tmp\ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
+        modified_file = f"ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
 
         # Define paths for both signatures
-        signature_path_1 = fr'tmp\signature_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
-        resized_image_path_1 = fr'tmp\resized_signature_image_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        signature_path_1 = fr'signature_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        resized_image_path_1 = fr'resized_signature_image_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
-        signature_path_2 = fr'tmp\signature_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
-        resized_image_path_2 = fr'tmp\resized_signature_image_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        signature_path_2 = fr'signature_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        resized_image_path_2 = fr'resized_signature_image_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
         # Check if the first signature exists in the session state
         if 'participant_signature_1' in st.session_state and len(st.session_state.participant_signature_1.json_data['objects']) != 0:
