@@ -341,8 +341,10 @@ if 'step' not in st.session_state:
     st.session_state.country_of_birth=''
     st.session_state.years_in_uk=''
 
+    # fix empty value error
     st.session_state.job_position=''
     st.session_state.job_start_date=''
+    st.session_state.tp_name=''
 
 
 
