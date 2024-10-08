@@ -335,6 +335,13 @@ if 'step' not in st.session_state:
     st.session_state.none_of_the_above = ''
     st.session_state.household_filled = ''
 
+    # Step 6: Employment and monitoring
+    st.session_state.resident_y=''
+    st.session_state.resident_n=''
+    st.session_state.country_of_birth=''
+    st.session_state.years_in_uk=''
+
+
 
     
 # mandatory fields validation
@@ -1073,8 +1080,6 @@ elif st.session_state.step == 7:
     # Section C - Employment details
     if "Employed" in st.session_state.employment_status:
         st.subheader('Section C - Employment details')
-        
-        
 
         st.session_state.employer_name_val = st.text_input("Employer Name")
         st.session_state.employer_address_1_val = st.text_input("Employer Address 1")
@@ -1093,6 +1098,19 @@ elif st.session_state.step == 7:
         st.session_state.employment_hours = st.radio("Employment Hours (place an X in the applicable box)", ["0-15 hrs per week", "16+ hrs per week"])
         st.session_state.employment_hours_val_0 = 'X' if st.session_state.employment_hours == "0-15 hrs per week" else '-' 
         st.session_state.employment_hours_val_6 = 'X' if st.session_state.employment_hours == "16+ hrs per week" else '-' 
+
+        st.session_state.job_position = st.text_input("Job Position")
+        st.session_state.job_start_date = st.date_input(
+                                                    label="Job Start Date",
+                                                    value=datetime(2000, 1, 1),  # Default date
+                                                    min_value=date(1900, 1, 1),  # Minimum selectable date
+                                                    max_value=date(2025, 12, 31),  # Maximum selectable date
+                                                    help="Choose a date",  # Tooltip text
+                                                    format='DD/MM/YYYY'
+                                                )
+        st.session_state.job_start_date = st.session_state.job_start_date.strftime("%d-%m-%Y")
+
+
 
 
     st.header("Benefits Detail")
@@ -1226,6 +1244,22 @@ elif st.session_state.step == 7:
     #     """)
 
     st.header('E01: Right to Live and Work in the UK')
+
+    st.session_state.resident = st.radio(
+        'Have you been resident in the UK/EEA for the previous 3 years?',
+        ('Yes', 'No')
+    )
+
+    if st.session_state.resident == 'Yes':
+        st.session_state.resident_y = 'X'
+        st.session_state.resident_n = ''
+    else:
+        st.session_state.resident_n = 'X'
+        st.session_state.resident_y = ''
+
+    # Input fields for country of birth and years in the UK
+    st.session_state.country_of_birth = st.text_input('Country of Birth:')
+    st.session_state.years_in_uk = st.number_input('How many years have you lived in the UK?', min_value=0)
 
     # var initialize
     st.session_state.hold_settled_status, st.session_state.hold_pre_settled_status, st.session_state.hold_leave_to_remain = '-', '-', '-'
@@ -2405,7 +2439,14 @@ elif st.session_state.step == 11:
             'p305': st.session_state.specify_refereel,
             'p232': st.session_state.tp_name,
             'p233': st.session_state.tp_position,
+
+            'p235': st.session_state.job_position,
+            'p236': st.session_state.job_start_date,
             
+            'p237y': st.session_state.resident_y,
+            'p237n': st.session_state.resident_n,
+            'p238': st.session_state.country_of_birth,
+            'p239': st.session_state.years_in_uk,
 
         }
         
@@ -2414,15 +2455,15 @@ elif st.session_state.step == 11:
         safe_family_name = st.session_state.family_name.strip().replace(" ", "_").lower()
 
         # Define input and output paths
-        template_file = "ph_esfa_v3.docx"
-        modified_file = f"ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
+        template_file = "resources\ph_esfa_v5.docx"
+        modified_file = f"tmp\ESFA_Form_Submission_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.docx"
 
         # Define paths for both signatures
-        signature_path_1 = f'signature_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
-        resized_image_path_1 = f'resized_signature_image_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        signature_path_1 = fr'tmp\signature_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        resized_image_path_1 = fr'tmp\resized_signature_image_1_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
-        signature_path_2 = f'signature_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
-        resized_image_path_2 = f'resized_signature_image_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        signature_path_2 = fr'tmp\signature_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
+        resized_image_path_2 = fr'tmp\resized_signature_image_2_{sanitize_filename(safe_first_name)}_{sanitize_filename(safe_family_name)}.png'
 
         # Check if the first signature exists in the session state
         if 'participant_signature_1' in st.session_state and len(st.session_state.participant_signature_1.json_data['objects']) != 0:
@@ -2436,7 +2477,7 @@ elif st.session_state.step == 11:
                 print(f"Opening image file: {signature_path_1}")
                 resized_image_1 = PILImage.open(signature_path_1)
                 print(f"Original image size (signature 1): {resized_image_1.size}")
-                resized_image_1 = resize_image_to_fit_cell(resized_image_1, 200, 50)
+                resized_image_1 = resize_image_to_fit_cell(resized_image_1, 200, 47)
                 resized_image_1.save(resized_image_path_1)  # Save resized image to a file
                 print(f"Resized image saved to: {resized_image_path_1}")
             except Exception as e:
