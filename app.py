@@ -2100,7 +2100,7 @@ elif st.session_state.step == 11:
     if not st.session_state.tp_name or not st.session_state.tp_position:
         st.warning("Please fill in both Name and Position before proceeding.")
         st.stop()
-
+    st.write(st.session_state.tp_name)
     st.text("Training Provider Signature:")
     st.session_state.participant_signature_2 = st_canvas(
         fill_color="rgba(255, 255, 255, 1)",
