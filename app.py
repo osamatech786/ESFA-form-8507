@@ -31,7 +31,7 @@ st.set_page_config(
 # add render support along with st.secret
 def get_secret(key):
     try:
-        load_dotenv()                                     # uncomment import of this library!
+        load_dotenv()
         # Attempt to get the secret from environment variables
         secret = os.environ.get(key)
         if secret is None:
@@ -237,16 +237,23 @@ def send_email_with_attachments(sender_email, sender_password, receiver_email, s
 
 # Function to add a checkbox with a file upload option
 def add_checkbox_with_upload(label, key_prefix):
-    # global files
     checked = st.checkbox(label, key=f"{key_prefix}_checkbox")
+    st.session_state.checkboxes[label] = checked
     if checked:
         st.text(f'Please upload a copy of your {label}')
         uploaded_file = st.file_uploader(f"Upload {label}", type=['pdf', 'jpg', 'jpeg', 'png', 'docx'], key=f"{key_prefix}_uploader")
         if uploaded_file is not None:
-            st.session_state.files.append(uploaded_file)
+            file_identifier = (uploaded_file.name, uploaded_file.size)
+            if file_identifier not in st.session_state.processed_files:
+                st.session_state.files.append(uploaded_file)
+                st.session_state.processed_files.add(file_identifier)
+        # Second File Uploader
         uploaded_file_1 = st.file_uploader(f"Optional - Upload Back Side of The Document", type=['pdf', 'jpg', 'jpeg', 'png', 'docx'], key=f"{key_prefix}_uploader_1")
         if uploaded_file_1 is not None:
-            st.session_state.files.append(uploaded_file_1)
+            file_identifier_1 = (uploaded_file_1.name, uploaded_file_1.size)
+            if file_identifier_1 not in st.session_state.processed_files:
+                st.session_state.files.append(uploaded_file_1)
+                st.session_state.processed_files.add(file_identifier_1)
         return 'X'
     else:
         return '-'
@@ -288,12 +295,16 @@ def progress_bar(duration_seconds):
 
 if 'files' not in st.session_state:
     st.session_state.files = []
+if 'checkboxes' not in st.session_state:
+    st.session_state.checkboxes = {}
+if 'processed_files' not in st.session_state:
+    st.session_state.processed_files = set()
 
 # Initialize session state
 if 'step' not in st.session_state:
     st.session_state.step = 1
     st.session_state.submission_done = False
-    if 'benefit_claim_date_val' not in st.session_state: st.session_state.benefit_claim_date_val = None
+    st.session_state.unique_files = []
 
     # Step 2: Personal Information initialization
     st.session_state.title_mr, st.session_state.title_mrs, st.session_state.title_miss, st.session_state.title_ms = '', '', '', ''
@@ -301,6 +312,10 @@ if 'step' not in st.session_state:
     st.session_state.first_name = ''
     st.session_state.middle_name = ''
     st.session_state.family_name = ''
+    st.session_state.learner_name =''
+    st.session_state.qualification =''
+    st.session_state.start_date = ''
+    st.session_state.end_date = ''
     st.session_state.gender_m, st.session_state.gender_f, st.session_state.other_gender, st.session_state.other_gender_text = '', '', '', ''
     st.session_state.gender = ''
     st.session_state.date_of_birth = ''
@@ -335,20 +350,160 @@ if 'step' not in st.session_state:
     st.session_state.none_of_the_above = ''
     st.session_state.household_filled = ''
 
-    # Step 6: Employment and monitoring
+    # Step 5: LLDD, Health Problems, Other Disadvantaged Section
+    st.session_state.has_disability, st.session_state.no_disability = '', ''
+    # Initialize variables for each health problem type
+    st.session_state.vision_impairment_primary, st.session_state.vision_impairment_secondary, st.session_state.vision_impairment_tertiary = '', '', ''
+    st.session_state.hearing_impairment_primary, st.session_state.hearing_impairment_secondary, st.session_state.hearing_impairment_tertiary = '', '', ''
+    st.session_state.mobility_impairment_primary, st.session_state.mobility_impairment_secondary, st.session_state.mobility_impairment_tertiary = '', '', ''
+    st.session_state.complex_disabilities_primary, st.session_state.complex_disabilities_secondary, st.session_state.complex_disabilities_tertiary = '', '', ''
+    st.session_state.social_emotional_difficulties_primary, st.session_state.social_emotional_difficulties_secondary, st.session_state.social_emotional_difficulties_tertiary = '', '', ''
+    st.session_state.mental_health_difficulty_primary, st.session_state.mental_health_difficulty_secondary, st.session_state.mental_health_difficulty_tertiary = '', '', ''
+    st.session_state.moderate_learning_difficulty_primary, st.session_state.moderate_learning_difficulty_secondary, st.session_state.moderate_learning_difficulty_tertiary = '', '', ''
+    st.session_state.severe_learning_difficulty_primary, st.session_state.severe_learning_difficulty_secondary, st.session_state.severe_learning_difficulty_tertiary = '', '', ''
+    st.session_state.dyslexia_primary, st.session_state.dyslexia_secondary, st.session_state.dyslexia_tertiary = '', '', ''
+    st.session_state.dyscalculia_primary, st.session_state.dyscalculia_secondary, st.session_state.dyscalculia_tertiary = '', '', ''
+    st.session_state.autism_spectrum_primary, st.session_state.autism_spectrum_secondary, st.session_state.autism_spectrum_tertiary = '', '', ''
+    st.session_state.aspergers_primary, st.session_state.aspergers_secondary, st.session_state.aspergers_tertiary = '', '', ''
+    st.session_state.temporary_disability_primary, st.session_state.temporary_disability_secondary, st.session_state.temporary_disability_tertiary = '', '', ''
+    st.session_state.speech_communication_needs_primary, st.session_state.speech_communication_needs_secondary, st.session_state.speech_communication_needs_tertiary = '', '', ''
+    st.session_state.physical_disability_primary, st.session_state.physical_disability_secondary, st.session_state.physical_disability_tertiary = '', '', ''
+    st.session_state.specific_learning_difficulty_primary, st.session_state.specific_learning_difficulty_secondary, st.session_state.specific_learning_difficulty_tertiary = '', '', ''
+    st.session_state.medical_condition_primary, st.session_state.medical_condition_secondary, st.session_state.medical_condition_tertiary = '', '', ''
+    st.session_state.other_learning_difficulty_primary, st.session_state.other_learning_difficulty_secondary, st.session_state.other_learning_difficulty_tertiary = '', '', ''
+    st.session_state.other_disability_primary, st.session_state.other_disability_secondary, st.session_state.other_disability_tertiary = '', '', ''
+    st.session_state.prefer_not_to_say= ''
+    st.session_state.additional_info=''
+    # Initialize ex_offender variables
+    st.session_state.ex_offender_y, st.session_state.ex_offender_n, st.session_state.ex_offender_choose_not_to_say = '', '', ''
+    # Initialize homeless variables
+    st.session_state.homeless_y, st.session_state.homeless_n, st.session_state.homeless_choose_not_to_say = '', '', ''
+    
+    
+    # Step 6: Referral Source Section
+    # Initialize referral source variables
+    st.session_state.internally_sourced, st.session_state.recommendation, st.session_state.event, st.session_state.self_referral, st.session_state.family_friends = '', '', '', '', ''
+    st.session_state.other, st.session_state.website, st.session_state.promotional_material, st.session_state.jobcentre_plus = '', '', '', ''
+    st.session_state.event_specify, st.session_state.other_specify = '', ''
+    st.session_state.internally_sourced_val = ''
+    st.session_state.recommendation_val = ''
+    st.session_state.event_val = ''
+    st.session_state.self_referral_val = ''
+    st.session_state.family_friends_val = ''
+    st.session_state.other_val = ''
+    st.session_state.website_val = ''
+    st.session_state.promotional_material_val = ''
+    st.session_state.jobcentre_plus_val = ''
+    st.session_state.specify_refereel = ''
+
+    # Step 7: Employment and Monitoring Information Section
+    if 'benefit_claim_date_val' not in st.session_state: st.session_state.benefit_claim_date_val = None
     st.session_state.resident_y=''
     st.session_state.resident_n=''
     st.session_state.country_of_birth=''
     st.session_state.years_in_uk=''
-
-    # fix empty value error
+    # Initialize employment status variables
+    st.session_state.unemployed_val, st.session_state.economically_inactive_val, st.session_state.employed_val = '', '', ''
+    st.session_state.up_to_12_months_val, st.session_state.twelve_months_or_longer_val = '-', '-'
+    # Initialize unemployment evidence variables
+    st.session_state.jcp_dwp_val, st.session_state.careers_service_val, st.session_state.third_party_val, st.session_state.other_evidence_val = '-', '-', '-', '-'
     st.session_state.job_position=''
     st.session_state.job_start_date=''
     st.session_state.tp_name=''
+    # Initialize economically inactive variables
+    st.session_state.inactive_status_val, st.session_state.inactive_evidence_type_val, st.session_state.inactive_evidence_date_val = 'N', '-', '-'    
+    # Initialize employment detail variables
+    st.session_state.employer_name_val, st.session_state.employer_address_1_val, st.session_state.employer_address_2_val = '', '', ''
+    st.session_state.employer_address_3_val, st.session_state.employer_postcode_val, st.session_state.employer_contact_name_val = '', '', ''
+    st.session_state.employer_contact_position_val, st.session_state.employer_contact_email_val, st.session_state.employer_contact_phone_val = '', '', ''
+    st.session_state.employer_edrs_number_val, st.session_state.living_wage_val, st.session_state.employment_hours_val_0, st.session_state.employment_hours_val_6 = '', '', '', ''
+    st.session_state.claiming_benefits_val, st.session_state.sole_claimant_val, st.session_state.benefits_list_val = '', '', ''
+    st.session_state.other_benefit_val = ''
+    # Initialize variables for benefits
+    st.session_state.universal_credit_val = ''
+    st.session_state.job_seekers_allowance_val = ''
+    st.session_state.employment_support_allowance_val = ''
+    st.session_state.incapacity_benefit_val = ''
+    st.session_state.personal_independence_payment_val = ''
+    st.session_state.nationality='-'
+    st.session_state.hold_settled_status, st.session_state.hold_pre_settled_status, st.session_state.hold_leave_to_remain = '-', '-', '-'
+    st.session_state.not_nationality, st.session_state.passport_non_eu, st.session_state.letter_uk_immigration, st.session_state.passport_endorsed, st.session_state.identity_card, st.session_state.country_of_issue, st.session_state.id_document_reference_number, st.session_state.e01_date_of_issue, st.session_state.e01_date_of_expiry, st.session_state.e01_additional_notes ='-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+    st.session_state.full_uk_passport, st.session_state.full_eu_passport, st.session_state.national_identity_card = '-', '-', '-'
+    st.session_state.full_passport_eu = ''
+    st.session_state.national_id_card_eu = ''
+    st.session_state.firearms_certificate = ''
+    st.session_state.birth_adoption_certificate = ''
+    st.session_state.e02_drivers_license = ''
+    st.session_state.edu_institution_letter = ''
+    st.session_state.e02_employment_contract = ''
+    st.session_state.state_benefits_letter = ''
+    st.session_state.pension_statement = ''
+    st.session_state.northern_ireland_voters_card = ''
+    st.session_state.e02_other_evidence_text= ''
+    st.session_state.e03_drivers_license = ''
+    st.session_state.bank_statement = ''
+    st.session_state.e03_pension_statement = ''
+    st.session_state.mortgage_statement = ''
+    st.session_state.utility_bill = ''
+    st.session_state.council_tax_statement = ''
+    st.session_state.electoral_role_evidence = ''
+    st.session_state.homeowner_letter = ''
+    st.session_state.e02_date_of_issue=''
+    st.session_state.e03_date_of_issue = ''
+    st.session_state.e03_other_evidence_text=''
+    st.session_state.latest_payslip = '-'
+    st.session_state.e04_employment_contract = '-'
+    st.session_state.confirmation_from_employer = '-'
+    st.session_state.redundancy_notice = '-'
+    st.session_state.sa302_declaration = '-'
+    st.session_state.ni_contributions = '-'
+    st.session_state.business_records = '-'
+    st.session_state.companies_house_records = '-'
+    st.session_state.other_evidence_employed = '-'
+    st.session_state.unemployed = '-'
+    st.session_state.e04_date_of_issue = ''
+    st.session_state.qualification_or_training_y, st.session_state.qualification_or_training_n = 'Y', ''
+    st.session_state.course_details = ''
+    st.session_state.funding_details = ''
+    st.session_state.p58 = '-'
+    st.session_state.p59 = '-'
+    st.session_state.p60 = '-'
+    st.session_state.p60z = '-'
+    st.session_state.p60a = '-'
+    st.session_state.p61 = '-'
+    st.session_state.p61z = '-'
+    st.session_state.p61a = '-'
+    st.session_state.p62 = '-'
+    st.session_state.p63 = '-'
+    st.session_state.p63z = '-'
+    st.session_state.p63a = '-'
+    st.session_state.p63b = '-'
+    st.session_state.p64 = '-'
+    st.session_state.e02_filled=''
+    st.session_state.e03_drivers_license = ''
+    st.session_state.bank_statement = ''
+    st.session_state.e03_pension_statement = ''
+    st.session_state.mortgage_statement = ''
+    st.session_state.utility_bill = ''
+    st.session_state.council_tax_statement = ''
+    st.session_state.electoral_role_evidence = ''
+    st.session_state.homeowner_letter = ''
+    st.session_state.e03_filled=''
 
+    # Step 9: Current Skills, Experience, and IAG
+    # Initialize marks
+    st.session_state.p93, st.session_state.p94, st.session_state.p95, st.session_state.p96, st.session_state.p97, st.session_state.p98 = '-', '-', '-', '-', '-', '-'
+    st.session_state.job_role_activities='No job.'
+    st.session_state.career_aspirations = ''
+    st.session_state.training_qualifications_needed='    '
+    st.session_state.barriers_to_achieving_aspirations='    '
+    st.session_state.selected_levels = ''
+    st.session_state.current_job = ''
 
+    # Step 10: Privacy Notice
+    # Initialize variables for contact preferences
+    st.session_state.contact_surveys_val, st.session_state.contact_phone_val, st.session_state.contact_email_val, st.session_state.contact_post_val = '', '', '', ''
 
-    
 # mandatory fields validation
 # exclude_fields = {}     
 # mandatory_fields = []
@@ -2065,7 +2220,48 @@ elif st.session_state.step == 10:
         st.experimental_rerun()
 
 elif st.session_state.step == 11:
-    st.title("> 10: Declarations")
+    st.title("Declaration and Signature")
+    
+    # Display the checked items
+    st.subheader("Checked Items:")
+    checked_items = [label for label, is_checked in st.session_state.checkboxes.items() if is_checked]
+    if checked_items:
+        for item in checked_items:
+            st.write(f" - {item}")
+    else:
+        st.write("No checkboxes selected.")
+
+    # Display all uploaded files
+    st.subheader("Uploaded Files:")
+    if st.session_state.files:
+        # Use a set to track unique file names and create a list of unique file entries
+        st.session_state.unique_files = []
+        unique_file_names = set()
+
+        for file_entry in st.session_state.files:
+            if isinstance(file_entry, tuple):
+                label, uploaded_file = file_entry
+                if uploaded_file.name not in unique_file_names:
+                    st.session_state.unique_files.append((label, uploaded_file))
+                    unique_file_names.add(uploaded_file.name)
+            else:
+                if file_entry.name not in unique_file_names:
+                    st.session_state.unique_files.append(file_entry)
+                    unique_file_names.add(file_entry.name)
+
+        # Display the unique files
+        for file_entry in st.session_state.unique_files:
+            if isinstance(file_entry, tuple):
+                label, uploaded_file = file_entry
+                st.write(f"- {label}: {uploaded_file.name}")
+            else:
+                st.write(f"- {file_entry.name}")
+    else:
+        st.write("No files uploaded.")
+
+
+    # Declaration text
+    st.subheader("Declaration:")
     st.text(
         'We hereby confirm that I have read, understood and agree with the contents of this document and above privacy notice, and understand that the programme is funded by the Mayor of London.'
     )
@@ -2553,7 +2749,26 @@ elif st.session_state.step == 11:
         
         subject = f"ESFA: {st.session_state.selected_option} {st.session_state.first_name} {st.session_state.family_name} {date.today()} {st.session_state.specify_refereel}"
 
-        body = f'''ESFA Form submitted. Please find attached files.'''
+        # Generate summary for checked items
+        checked_items = [label for label, is_checked in st.session_state.checkboxes.items() if is_checked]
+        checked_summary = "<br>".join([f"- {item}" for item in checked_items]) if checked_items else "No checkboxes selected."
+
+        # Generate summary for uploaded files, ensuring uniqueness
+        uploaded_files = list(set(file.name for file in st.session_state.files if isinstance(file, st.runtime.uploaded_file_manager.UploadedFile)))
+        files_summary = "<br>".join([f"- {file}" for file in uploaded_files]) if uploaded_files else "No files uploaded."
+
+        # Construct the email body with formatted sections in HTML
+        body = f'''
+        <p>ESFA Form submitted. Please find attached files.</p>
+
+        <p><strong>Checked Items:</strong><br>
+        {checked_summary}</p>
+
+        <p><strong>Uploaded Files:</strong><br>
+        {files_summary}</p>
+
+        <p>Thank you.</p>
+        '''
 
         # Local file path
         local_file_path = modified_file
