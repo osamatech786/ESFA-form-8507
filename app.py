@@ -2297,7 +2297,9 @@ elif st.session_state.step == 11:
     # Validation to check if fields are empty
     if not st.session_state.tp_name or not st.session_state.tp_position:
         st.warning("Please fill in both Name and Position before proceeding.")
-        st.stop()
+        is_button_disabled = True
+    else:
+        is_button_disabled = False
 
     st.text("Training Provider Signature:")
     st.session_state.participant_signature_2 = st_canvas(
@@ -2320,7 +2322,7 @@ elif st.session_state.step == 11:
 # ####################################################################################################################################
 
     # submit_button = st.button('Submit')
-    if st.button("Submit"):
+    if st.button("Submit", disabled=is_button_disabled):
         st.warning('Please wait! We are currently processing. . . .', icon="🚨")
         
         try: # A joke
