@@ -210,7 +210,7 @@ def resize_image_to_fit_cell(image, max_width, max_height):
 def send_email_with_attachments(sender_email, sender_password, receiver_email, subject, body, files=None, local_file_path=None):
     msg = EmailMessage()
     msg['From'] = sender_email
-    msg['To'] = receiver_email
+    msg['To'] = ", ".join(receiver_email)
     msg['Subject'] = subject
     msg.set_content(body, subtype='html')
 
@@ -2742,8 +2742,13 @@ elif st.session_state.step == 11:
         # sender_email = 'dummy'
         # sender_password = 'dummy'            
 
-        receiver_email = sender_email
-        
+        if st.session_state.selected_option == "Family Ties":
+            receiver_email = [sender_email, get_secret("email_ft_mariya"), get_secret("email_ft_mohib")]
+        elif st.session_state.selected_option == "Innovators":
+            receiver_email = [sender_email, get_secret("email_inno_shahid")]
+        else:
+            receiver_email = [sender_email]    
+                    
         # Credentials: Local env
         # load_dotenv()                                     # uncomment import of this library!
         # sender_email = os.getenv('EMAIL')
